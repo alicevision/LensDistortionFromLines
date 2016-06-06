@@ -1,0 +1,232 @@
+% An iterative optimization algorithm for lens distortion correction using tow-parameter models
+
+# ABOUT
+
+* Author    : Miguel Alemán-Flores  <maleman@ctim.es>
+              Luis Álvarez  <lalvarez@ctim.es>
+              Luis Gómez <lgomez@ctim.es>
+              Daniel Santana-Cedrés <dsantana@ctim.es>
+* Copyright : (C) 2009-2013 IPOL Image Processing On Line http://www.ipol.im/
+* License   : CC Creative Commons "Attribution-NonCommercial-ShareAlike" 
+              see http://creativecommons.org/licenses/by-nc-sa/3.0/es/deed.en
+							
+# CHANGE LOG
+********************************************************************************
+Description of the fields of the change log:
+--------------------------------------------------------------------------------
+FIELD			DESCRIPTION
+--------------------------------------------------------------------------------
+DATE: 		The date when the changes have been done
+AUTHOR: 	The author of the changes made
+CHANGES: 	This field has four subfields that are:
+					Files: 		List of the files affected by the changes
+					Issue: 		Brief description of the found issue
+					System: 	System in which the issue has been found
+					Solution: Adopted solution for the found issue
+					(When more than one issue has been found on a same date, in the change log appear more blocks of these subfields)
+--------------------------------------------------------------------------------
+********************************************************************************
+
+
+================================================================================
+DATE:			08/04/2014
+AUTHOR:		Daniel Santana-Cedrés
+CHANGES:	Files:		ami_utilities/utilities.h
+					Issue:		Unused macros
+					System:		All
+					Solution:	We remove the unused macros for allocating and deallocating 3D space in memory
+================================================================================
+
+================================================================================
+DATE:			21/04/2014
+AUTHOR:		Daniel Santana-Cedrés
+CHANGES:	Files:		ami_utilities/utilities.h
+										ami_utilities/utilities.cpp
+					Issue:		New function added
+					System:		All
+					Solution:	We add a new function for checking the invertibility of a lens distortion model, according to theorems shown on SIIMS paper
+					----
+					Files:		lens_distortion_correction_2p_iterative_optimization.cpp
+					Issue:		true and false values for center optimization
+					System:		All
+					Solution:	We have changed the values for the center optimization from true/false to True/False, because they caused a problem with the online demo
+================================================================================
+
+================================================================================
+DATE:			25/04/2014
+AUTHOR:		Daniel Santana-Cedrés
+CHANGES:	Files:		ami_image/image.h
+					Issue:		Warning on asignation
+					System:		All
+					Solution:	We remove a warning on assignation, in which we had "==" instead "="
+					---
+					Files:		ami_lens_distortion/lens_distortion_model.cpp (read function)
+					Issue:		Returned values are ignored (-Werror flag)
+					System:		Ubuntu Linux 14.04 LTS with GCC version 4.8.2
+					Solution:	We take into account the returned values from fscanf, and we use it for error checking
+================================================================================
+
+================================================================================
+
+DATE: 		03/06/2014
+AUTHOR: 	Daniel Santana-Cedrés
+CHANGES:  Files: 		ami_image/io_png/io_png.c
+										ami_pol/ami_pol.c
+					Issue: 		Compiling/linking errors with C and C++
+					System:		Ubuntu Linux 14.04 LTS with GCC version 4.8.2
+					Solution:	We move both files into .cpp files
+					----
+					File: 		ami_image_draw/image_draw.h
+					Issue: 		Uninitialized variable "cercle_color" is considered as an error due to -Werror compilation flag
+					System:		Ubuntu Linux 14.04 LTS with GCC version 4.8.2
+					Solution: We initialize the variable to zero
+
+================================================================================
+
+================================================================================
+
+DATE: 		04/06/2014
+AUTHOR: 	Daniel Santana-Cedrés
+CHANGES:  Files: 		ami_filters/filters.h
+										ami_image/image.h
+										ami_lens_distortion/lens_distortion_procedures.h
+										ami_primitives/line_extraction.cpp
+					Issue: 		Compile error (-Werror) when the -fopen flag is dissabled 
+					System:		Ubuntu Linux 14.04 LTS with GCC version 4.8.2
+					Solution:	We have checked all the #pragma statements and we have added preprocessor directives for taking into account the definition of the _OPENMP macro 
+
+================================================================================
+
+================================================================================
+
+DATE: 		05/06/2014
+AUTHOR: 	Daniel Santana-Cedrés
+CHANGES:  Files: 		ami_utilities/utilities.h
+										ami_image/io_png/io_png.cpp										
+					Issue: 		Returned values are ignored (-Werror flag)
+					System:		Ubuntu Linux 14.04 LTS with GCC version 4.8.2
+					Solution:	We take into account the returned values from fscanf, and we use it for error checking
+					----
+					File: 		ami_image_draw/image_draw.h
+					Issue: 		Uninitialized variable circle_color
+					System:		Ubuntu Linux 14.04 LTS with GCC version 4.8.2
+					Solution: We initialize the variable to zero
+					----
+					Files:		ami_pol/ami_pol.h
+					Issue:		Deprecated inclusion of malloc.h
+					System:		OSX
+					Solution:	We change the inclusion of malloc.h by cstdlib
+					----
+					Files:		ami_lens_distortion/lens_distortion_model.cpp
+					Issue:		Stdio functions not being declared
+					System:		Ubuntu Linux 14.04 LTS with GCC version 4.8.2
+					Solution:	We have included the header file cstdio
+					----
+					Files:		ami_lens_distortion/lens_distortion_model.h
+										ami_primitives/subpixel_image_contours.h
+					Issue:		Improving the documentation
+					System:		All
+					Solution:	We have improved the documentation of the methods of the classes lens_distortion_model and subpixel_image_contours
+					----
+					Files:		ami_lens_distortion/lens_distortion_procedures.cpp
+										ami_primitives/line_points.cpp
+					Issue:		Undeclared 'sqrtl' function
+					System:		Windows 7 with CYGWIN 6.1 and GCC version 4.8.2
+					Solution:	Since C99 the 'sqrt' function works with long double input parameters, so we change the 'sqrtl' calls for 'sqrt'
+================================================================================
+
+================================================================================
+
+DATE: 		06/06/2014
+AUTHOR: 	Daniel Santana-Cedrés
+CHANGES:  Files: 		ami_utilities/utilities.h
+										ami_utilities/utilities.cpp
+										lens_distortion_correction_2p_iterative_optimization.cpp
+					Issue: 		Checking the invertibility of the lens distortion model 
+					System:		All
+					Solution:	We have added a new function to check the invertibility of the lens distortion model.
+
+================================================================================
+
+================================================================================
+
+DATE:     11/06/2014
+AUTHOR:   Daniel Santana-Cedrés
+CHANGES:  Files:    lens_distortion_correction_2p_iterative_optimization.cpp
+          Issue:    Checking the invertibility of the lens distortion model 
+          System:   All
+          Solution: We have added the checking of the invertibility of the lens distortion model inside the iterative process and the error minimization
+
+================================================================================
+
+================================================================================
+
+DATE:     12/06/2014
+AUTHOR:   Daniel Santana-Cedrés
+CHANGES:  Files:    ami_lens_distortion/lens_distortion_procedures.cpp
+          Issue:    Iterations test 
+          System:   All
+          Solution: We have added a check for controlling that the minimization process doesn't enter on an infinite loop
+
+================================================================================
+
+================================================================================
+
+DATE:     27/06/2014
+AUTHOR:   Daniel Santana-Cedrés
+CHANGES:  Files:    ami_utilities/utilities.cpp
+          Issue:    Print function syntax 
+          System:   All
+          Solution: We have changed the example line with new values for the parameters (path of the example image and angle_point_orientation_max_difference)
+
+================================================================================
+
+================================================================================
+
+DATE:     18/07/2014
+AUTHOR:   Daniel Santana-Cedrés
+CHANGES:  Files:    ami_lens_distortion/lens_distortion_procedures.cpp
+          Issue:    Checking the invertibility of the lens distortion model inside the minimization process
+          System:   All
+          Solution: We have added the checking of the invertibility as part of the condition of the update in the process of the energy minimization
+
+================================================================================
+
+================================================================================
+
+DATE:     20/10/2014
+AUTHOR:   Daniel Santana-Cedrés
+CHANGES:  Files:    ami_image/io_png/io_png.cpp
+          Issue:    strcmp function not found
+          System:   MacOSX 10.6.8 wiht GCC version 4.2.1
+          Solution: We include the appropriate header file
+					----
+					File:			README.txt
+					Issue:		Improve the existent documentation
+					System:		All
+					Solution:	We include new documentation related to problems with png library on MacOSX and we describe the systems where we have checked the code
+					----
+					File:			README.txt
+					Issue:		Flags -Werror and -fopenmp
+					System:		All
+					Solution:	We have modified the compilation line in order to remove the -Werror flag. Also, we include an alternative compilation line using the OpenMP library
+					----
+					File:			makefile
+					Issue:		The flags -Werror and -fopenmp have been removed
+					System:		All
+					Solution:	We have removed the -Werror flag and -fopenmp flag appears as an alternative option inside a commented line in the makefile
+
+================================================================================
+
+================================================================================
+
+DATE:     27/11/2014
+AUTHOR:   Daniel Santana-Cedrés
+CHANGES:  Files:    makefile
+          Issue:    Compile options for using OpenMP library
+          System:   All
+          Solution: We have added a compile option for using or not the OpenMP library, by means of indicate the activation of the OMP variable (OMP=1) with the make command.
+
+================================================================================
+
+
