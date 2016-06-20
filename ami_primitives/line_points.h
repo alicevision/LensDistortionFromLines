@@ -137,13 +137,19 @@ const  ami::line &get_rect()  const {return rect;}
   * \author Luis Alvarez
   */
  void set_abc(double a/** Not described */,double b/** Not described */,
-              double c/** Not described */){rect.set_abc(a,b,c);}
+              double c/** Not described */)
+ {
+   rect.set_abc(a,b,c);
+ }
+ 
  /**
   * \fn void set_points(std::vector<point2d<double> > p2)
   * \author Luis Alvarez
   */
- void set_points(std::vector<point2d<double> > p2/** Not described */){
-   points=p2;};
+ void set_points(const std::vector<point2d<double> >& p2/** Not described */)
+ {
+   points=p2;
+ }
 
  double points_to_equation()/** COMPUTES RECT FROM x,y*/;
  /**
@@ -151,7 +157,8 @@ const  ami::line &get_rect()  const {return rect;}
   * \author Luis Alvarez
   */
 
- double evaluation(const point2d<double> &p /** point2d */) const {
+ double evaluation(const point2d<double> &p /** point2d */) const
+ {
         return (rect.get_a()*p.x+rect.get_b()*p.y+rect.get_c());
  }
 
@@ -165,7 +172,7 @@ const  ami::line &get_rect()  const {return rect;}
  void get_max_min_points(point2d<double> &min_x_p, point2d<double> &max_x_p,
                          point2d<double> &min_y_p, point2d<double> &max_y_p );
 												 
- double distance(point2d<double> &p /** point2d */);
+ double distance(const point2d<double> &p /** point2d */);
 
 };
 

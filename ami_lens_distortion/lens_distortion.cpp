@@ -47,13 +47,15 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_distance_2v(
    double **pol, /* 4 DEGREE 2 VARIABLE POLYNOM TO MINIMIZE (INPUT-OUTPUT) */
    double alfa) /* WEIGHT OF THE DISTANCE IN THE POLYNOM ENERGY */
 {
-  int i,j,k/*,l*/;
-  double *A,*x2,*y2,*d1,*d2/*,s_yy,y_m,x2_m,s_max,x_m,s_xx,y2_m ,xA_m*/;
+  int i, j, k/*,l*/;
+  double *A, *x2, *y2, *d1, *d2/*,s_yy,y_m,x2_m,s_max,x_m,s_xx,y2_m ,xA_m*/;
 //  double /*xd1_m,yA_m,yd2_m,xd2_m,yd1_m*/;
-  double paso,**pol1,**pol2,**p_xx,**p_xy,**p_yy;
+  double paso, **pol1, **pol2, **p_xx, **p_xy, **p_yy;
   /* WE CHECK alfa VALUE */
-  if(Np<3) return(-1);
-  if(alfa==0) return(-2);
+  if(Np < 3)
+    return(-1);
+  if(alfa == 0)
+    return(-2);
 
   /* WE ALLOCATE MEMORY */
   A=(double*)malloc( sizeof(double)*Np );
@@ -68,11 +70,12 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_distance_2v(
   ami_calloc2d(p_yy,double,3,3);
 
   /* WE COMPUTE THE DISTANCE TO THE IMAGE CENTER */
-  for(i=0;i<Np;i++)
+  for(i=0; i<Np; i++)
     d1[i]=sqrt( (x[i]-x0)*(x[i]-x0)+(y[i]-y0)*(y[i]-y0) );
 
   /* WE COMPUTE THE POINT TRANSFORMATION WITH THE CURRENT LENS DISTORTION MODEL */
-  for(i=0;i<Np;i++){
+  for(i=0; i<Np; i++)
+  {
     A[i]=ami_polynomial_evaluation(a,Na,d1[i]);
     x2[i]=x0+(x[i]-x0)*A[i];
     y2[i]=y0+(y[i]-y0)*A[i];
@@ -81,16 +84,23 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_distance_2v(
 
  /* WE COMPUTE THE POLYNOMS CORRESPONDING TO THE DISTANCE ERROR */
 
- for(i=0;i<=2;i++) for(j=0;j<=2;j++) p_xx[i][j]=0.;
-  for(i=0;i<Np;i++){
+ for(i=0; i<=2; i++)
+  for(j=0; j<=2; j++) 
+    p_xx[i][j]=0.;
+  for(i=0; i<Np; i++)
+  {
     paso=0;
-    for(k=1;k<=Na;k++) if(k!=k1 && k!=k2) paso+=a[k]*pow(d1[i],(double) k);
+    for(k=1; k<=Na; k++) 
+      if(k!=k1 && k!=k2)
+        paso+=a[k]*pow(d1[i],(double) k);
     pol1[0][0]=paso*d1[i];
     pol1[1][0]=pow(d1[i],(double) k1+1);
     pol1[0][1]=pow(d1[i],(double) k2+1);
     ami_2v_polynom_multiplication(pol1,1,pol1,1,p_xx);
   }
-  for(i=0;i<=2;i++) for(j=0;j<=2;j++) p_xx[i][j]=alfa*p_xx[i][j]/Np;
+  for(i=0; i<=2; i++)
+    for(j=0; j<=2; j++)
+      p_xx[i][j]=alfa*p_xx[i][j]/Np;
 
   /* WE UPDATE THE ERROR POLYNOM */
   ami_2v_polynom_multiplication(p_xx,2,p_xx,2,pol);
@@ -124,20 +134,24 @@ AMI_DLL_CPP double ami_lens_distortion_estimation_2v(double **x,double **y,int N
    double x0,double y0,double *a,int Na,int k1,int k2,double alfa)
 {
 
-  int i,/*j,*/k,m;
-  double **pol_v2,d,suma_Ad,suma_dd,/*paso,*/A,Error=0;
+  int i,/*j,*/k, m;
+  double **pol_v2, d, suma_Ad, suma_dd,/*paso,*/A, Error=0;
   /* WE ALLOCATE MEMORY */
   ami_calloc2d(pol_v2,double,5,5);
 
   /* WE UPDATE a[0] BY MINIMIZING THE DISTANCE OF THE DISTORTED POINTS TO
   THE UNDISTORTED POINTS */
-  if(alfa>0){
+  if(alfa > 0)
+  {
     suma_dd=suma_Ad=0;
-    for(m=0;m<Nl;m++){
-      for(i=0;i<Np[m];i++){
+    for(m=0; m<Nl; m++)
+    {
+      for(i=0; i<Np[m]; i++)
+      {
         d=sqrt( (x[m][i]-x0)*(x[m][i]-x0)+(y[m][i]-y0)*(y[m][i]-y0) );
         A=0;
-        for(k=1;k<=Na;k++) A+=a[k]*pow(d,(double) k+1);
+        for(k=1; k<=Na; k++)
+          A+=a[k]*pow(d,(double) k+1);
         suma_dd+=d*d;
         suma_Ad+=A*d;
       }
@@ -147,7 +161,8 @@ AMI_DLL_CPP double ami_lens_distortion_estimation_2v(double **x,double **y,int N
   }
 
 
-  for(m=0;m<Nl;m++){
+  for(m=0; m<Nl; m++)
+  {
     /* WE UPDATE DE POLYNOM TO MINIMIZE */
     ami_lens_distortion_polynomial_update_2v(x[m],y[m],Np[m],a,Na,x0,y0,k1,k2,pol_v2);
     ami_lens_distortion_polynomial_update_distance_2v(x[m],y[m],Np[m],a,Na,x0,y0,k1,k2,pol_v2,alfa);
@@ -160,7 +175,7 @@ AMI_DLL_CPP double ami_lens_distortion_estimation_2v(double **x,double **y,int N
   ami_free2d(pol_v2);
 
 
-  for(m=0;m<Nl;m++)
+  for(m=0; m<Nl; m++)
     Error+=ami_LensDistortionEnergyError(x[m],y[m],Np[m],x0,y0,a,Na);
   return(Error/Nl);
 }
@@ -182,11 +197,14 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
    int k2,  /* COEFICIENT 2 OF THE POLYNOMIAL TO BE UPDATED (INPUT)*/
    double **pol) /* 4 DEGREE POLYNOM TO MINIMIZE (INPUT) */
 {
-  int j,i,M,Nr=0,m;
-  double *x,**pol_x,**pol_y,*pol_r,xr,yr,Emin,*rx,*ry,*b2,*p3;
-  double sx,sy,/*paso,*/Energy; /* NORMALIZATION FACTORS */
+  int j, i, M, Nr=0, m;
+  double *x, **pol_x, **pol_y, *pol_r, xr, yr, Emin, *rx, *ry, *b2, *p3;
+  double sx, sy,/*paso,*/ Energy; /* NORMALIZATION FACTORS */
   double p_r3[6][6][19];
-  for(i=0;i<6;i++) for(j=0;j<6;j++) for(m=0;m<19;m++) p_r3[i][j][m]=0.;
+  for(i=0; i<6; i++)
+    for(j=0; j<6; j++)
+      for(m=0; m<19; m++)
+        p_r3[i][j][m]=0.;
   /* WE ALLOCATE MEMORY */
   x=(double*)malloc( sizeof(double)*3 );
   ami_calloc2d(pol_x,double,5,5);
@@ -198,10 +216,14 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
   /* WE NORMALIZE POLYNOM COEFICIENT */
   sx=pow(pol[4][0],(double) 0.25);
   sy=pow(pol[0][4],(double) 0.25);
-  for(i=0;i<=4;i++){
-    for(j=0;j<=4;j++){
-      if(i>0)  pol[i][j]/=pow(sx,(double) i);
-      if(j>0)  pol[i][j]/=pow(sy,(double) j);
+  for(i=0;i<=4;i++)
+  {
+    for(j=0; j<=4; j++)
+    {
+      if(i > 0)
+        pol[i][j]/=pow(sx,(double) i);
+      if(j > 0)
+        pol[i][j]/=pow(sy,(double) j);
     }
   }
   //printf("\n");
@@ -210,8 +232,10 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
   /* WE COMPUTE THE DERIVATIVES OF THE POLYNOM */
   ami_2v_polynom_derivatives(pol,4,pol_x, pol_y);
   /* WE FILL THE MATRIX TO COMPUTE THE DETERMINANT */
-  for(i=0;i<=3;i++){
-    for(m=0;m<=4;m++){
+  for(i=0; i<=3; i++)
+  {
+    for(m=0; m<=4; m++)
+    {
       p_r3[2][i+2][m]=p_r3[1][i+1][m]=p_r3[0][i][m]=pol_x[3-i][m];
       p_r3[5][i+2][m]=p_r3[4][i+1][m]=p_r3[3][i][m]=pol_y[3-i][m];
     }
@@ -220,31 +244,54 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
   pol_r=(double*) malloc(sizeof(double)*19);
   ami_polynom_determinant(p_r3,18,6,pol_r);
   /* WE COMPUTE THE RESOLVENT POLYNOM DEGREE */
-  for(i=0;i<=18;i++){
-    if(pol_r[i]!=0) Nr=i;
+  for(i=0; i<=18; i++)
+  {
+    if(pol_r[i] != 0)
+      Nr=i;
   }
   /* WE COMPUTE THE ROOT OF THE RESOLVENT POLYNOM */
   rx=(double*) malloc(sizeof(double)*Nr);
   ry=(double*) malloc(sizeof(double)*Nr);
   b2=(double*) malloc(sizeof(double)*(Nr+1));
-  for(i=0;i<=Nr;i++) b2[i]=pol_r[Nr-i];
+  
+  for(i=0; i<=Nr; i++)
+    b2[i] = pol_r[Nr-i];
   Nr=ami_polynomial_root(b2,Nr,rx,ry);
   /* WE COMPUTE THE X COMPONENT BY REPLACING THE ROOTS IN THE DERIVATIVES
   OF THE POLYNOM */
-  xr=0; yr=0; Emin=10e90;
-  for(i=0;i<Nr;i++){
-    if(fabs(ry[i])> 0.000000000000001) continue;
+  xr=0; 
+  yr=0; 
+  Emin=10e90;
+  
+  for(i=0; i<Nr; i++)
+  {
+    if(fabs(ry[i])> 0.000000000000001)
+      continue;
     ami_2v_polynom_to_1v_polynom(pol_x,4,p3,rx[i],1);
     M=ami_RootCubicPolynomial(p3,3,x);
-    for(m=0;m<M;m++){
+    
+    for(m=0; m<M; m++)
+    {
      Energy=ami_2v_polynom_evaluation(pol,4,x[m],rx[i]);
-     if(Energy<Emin){ Emin=Energy; xr=rx[i]; yr=x[m];}
+     if(Energy < Emin)
+     { 
+       Emin=Energy; 
+       xr=rx[i]; 
+       yr=x[m];
+     }
     }
     ami_2v_polynom_to_1v_polynom(pol_y,4,p3,rx[i],1);
     M=ami_RootCubicPolynomial(p3,3,x);
-    for(m=0;m<M;m++){
+    
+    for(m=0; m<M; m++)
+    {
       Energy=ami_2v_polynom_evaluation(pol,4,x[m],rx[i]);
-      if(Energy<Emin){ Emin=Energy; xr=rx[i]; yr=x[m];}
+      if(Energy < Emin)
+      { 
+        Emin=Energy;
+        xr=rx[i];
+        yr=x[m];
+      }
     }
   }
   //printf("Minimun Value of the 4 DEGREE POLYNOMIAL ERROR:%e\n",Emin);
@@ -258,8 +305,6 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
 
   return(0);
 }
-
-
 
 /**
  * \fn int ami_lens_distortion_polynomial_update_2v(double *x, double *y,int Np,double *a,int Na,double x0,double y0,int k1,int k2,double **pol)
@@ -286,10 +331,11 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_2v(
    double **pol) /* 4 DEGREE 2 VARIABLE POLYNOM TO MINIMIZE (INPUT-OUTPUT) */
 {
   int i,j/*,k,l*/;
-  double *A,*x2,*y2,*d1,*d2,/*x_m,y_m,*/x2_m,y2_m,s_xx,s_yy/*,s_max*/,xA_m;
-  double xd1_m,yA_m,yd1_m,xd2_m,yd2_m;
-  double paso,**pol1,**pol2,**p_xx,**p_xy,**p_yy;
-  if(Np<3) return(-1);
+  double *A, *x2, *y2, *d1, *d2,/*x_m,y_m,*/x2_m, y2_m, s_xx, s_yy/*,s_max*/, xA_m;
+  double xd1_m, yA_m, yd1_m, xd2_m, yd2_m;
+  double paso, **pol1, **pol2, **p_xx, **p_xy, **p_yy;
+  if(Np < 3)
+    return(-1);
   /* WE ALLOCATE MEMORY */
   A=(double*)malloc( sizeof(double)*Np );
   x2=(double*)malloc( sizeof(double)*Np );
@@ -303,11 +349,12 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_2v(
   ami_calloc2d(p_yy,double,3,3);
 
   /* WE COMPUTE THE DISTANCE TO THE IMAGE CENTER */
-  for(i=0;i<Np;i++)
+  for(i=0; i<Np; i++)
     d1[i]=sqrt( (x[i]-x0)*(x[i]-x0)+(y[i]-y0)*(y[i]-y0) );
 
   /* WE COMPUTE THE POINT TRANSFORMATION WITH THE CURRENT LENS DISTORTION MODEL */
-  for(i=0;i<Np;i++){
+  for(i=0; i<Np; i++)
+  {
     A[i]=ami_polynomial_evaluation(a,Na,d1[i]);
     x2[i]=x0+(x[i]-x0)*A[i];
     y2[i]=y0+(y[i]-y0)*A[i];
@@ -315,15 +362,24 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_2v(
 
   /* WE COMPUTE THE DISTANCE POWER k1 AND k2 (THE COEFICIENT OF THE LENS
   DISTORTION MODEL TO BE UPDATED */
-  for(i=0;i<Np;i++){
+  for(i=0; i<Np; i++)
+  {
     paso=d1[i];
     d1[i]=pow(paso,(double) k1);
     d2[i]=pow(paso,(double) k2);
  }
 
   /* WE COMPUTE THE VARIANCE OF THE TRANSFORMED POINTS */
-  x2_m=0; for(i=0;i<Np;i++) x2_m+=x2[i];  x2_m/=Np;
-  s_xx=0; for(i=0;i<Np;i++) s_xx+=(x2[i]-x2_m)*(x2[i]-x2_m); s_xx/=Np;
+  x2_m=0;
+  for(i=0; i<Np; i++)
+    x2_m+=x2[i]; 
+  x2_m/=Np;
+  
+  s_xx=0;
+  for(i=0; i<Np; i++)
+    s_xx+=(x2[i]-x2_m)*(x2[i]-x2_m);
+  s_xx/=Np;
+  
   y2_m=0; for(i=0;i<Np;i++) y2_m+=y2[i];  y2_m/=Np;
   s_yy=0; for(i=0;i<Np;i++) s_yy+=(y2[i]-y2_m)*(y2[i]-y2_m); s_yy/=Np;
   //s_max=s_xx>s_yy?s_xx:s_yy;
@@ -338,7 +394,8 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_2v(
 
  /* WE COMPUTE THE POLYNOMS OF THE SECOND ORDER MOMENT OF THE POINT
      p_xx p_xy AND p_yy DISTRIBUTION */
-  for(i=0;i<Np;i++){
+  for(i=0; i<Np; i++)
+  {
     pol1[0][0]=(x[i]-x0)*A[i]-xA_m;
     pol1[1][0]=(x[i]-x0)*d1[i]-xd1_m;
     pol1[0][1]=(x[i]-x0)*d2[i]-xd2_m;
@@ -352,9 +409,13 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_2v(
   /* WE COMPUTE p_xx * p_yy - p_xy * p_xy  AND WE ADD THE VALUE TO THE
   GIVEN ENERGY ERROR POLYNOM */
 
-  for(i=0;i<=2;i++) for(j=0;j<=2;j++) p_xx[i][j]/=1. /*s_max*/ ;
+  for(i=0; i<=2; i++)
+    for(j=0; j<=2; j++)
+      p_xx[i][j]/=1. /*s_max*/ ;
   ami_2v_polynom_multiplication(p_xx,2,p_yy,2,pol);
-  for(i=0;i<=2;i++) for(j=0;j<=2;j++) p_xx[i][j]=-p_xy[i][j]/1. /*s_max*/;
+  for(i=0; i<=2; i++)
+    for(j=0; j<=2; j++)
+      p_xx[i][j]=-p_xy[i][j]/1. /*s_max*/;
   ami_2v_polynom_multiplication(p_xy,2,p_xx,2,pol);
 
   /* WE FREE THE MEMORY */
@@ -383,17 +444,17 @@ AMI_DLL_CPP void ami_2v_polynom_derivatives(
   double **p_x, /* DERIVATIVE OF THE POLYNOM WITH RESPECT TO THE FIRST VARIABLE (OUTPUT) */
   double **p_y) /* DERIVATIVE OF THE POLYNOM WITH RESPECT TO THE SECOND VARIABLE(OUTPUT) */
 {
-  int i,j;
-  for(i=0;i<=N;i++)
-    for(j=0;j<=N;j++)
+  int i, j;
+  for(i=0; i<=N; i++)
+    for(j=0; j<=N; j++)
       p_x[i][j]=p_y[i][j]=0;
 
-  for(i=1;i<=N;i++)
-    for(j=0;j<=N;j++)
+  for(i=1; i<=N; i++)
+    for(j=0; j<=N; j++)
       p_x[i-1][j]=i*p[i][j];
 
-  for(i=0;i<=N;i++)
-    for(j=1;j<=N;j++)
+  for(i=0; i<=N; i++)
+    for(j=1; j<=N; j++)
       p_y[i][j-1]=j*p[i][j];
 
 }
@@ -408,17 +469,21 @@ AMI_DLL_CPP void ami_2v_polynom_derivatives(
  */
 AMI_DLL_CPP double ami_determinante(double **A,int N)
 {
-  int i,k,l,cont;
+  int i, k, l, cont;
   double **B,paso;
   // printf("N=%d ",N);
-  if(N==1) return(A[0][0]);
+  if(N == 1)
+    return(A[0][0]);
   ami_calloc2d(B,double,N-1,N-1);
   paso=0;
   cont=-1;
-  for(i=0;i<N;i++){
+  for(i=0; i<N; i++)
+  {
     cont*=-1;
-    for(k=0;k<N-1;k++){
-      for(l=0;l<N-1;l++){
+    for(k=0; k<N-1; k++)
+    {
+      for(l=0; l<N-1; l++)
+      {
         B[k][l]=A[k+1][l>=i?l+1:l];
       }
     }
@@ -439,16 +504,19 @@ AMI_DLL_CPP double ami_determinante(double **A,int N)
  */
 AMI_DLL_CPP double ami_determinante(double A[3][3])
 {
-  int i,k,l,cont;
-  double **B,paso;
+  int i, k, l, cont;
+  double **B, paso;
   int N=3;
   ami_calloc2d(B,double,N-1,N-1);
   paso=0;
   cont=-1;
-  for(i=0;i<N;i++){
+  for(i=0; i<N; i++)
+  {
     cont*=-1;
-    for(k=0;k<N-1;k++){
-      for(l=0;l<N-1;l++){
+    for(k=0; k<N-1; k++)
+    {
+      for(l=0; l<N-1; l++)
+      {
         B[k][l]=A[k+1][l>=i?l+1:l];
       }
     }
@@ -473,21 +541,44 @@ AMI_DLL_CPP void ami_polynom_determinant(double p[6][6][19],int Np,int Nd,double
   int i,j,k,l,m,cont;
   double *q2;
   double p2[6][6][19];
-  if(Nd==1){ for(i=0;i<=18;i++) q[i]=p[0][0][i]; return;}
-  for(i=0;i<6;i++) for(j=0;j<6;j++) for(m=0;m<19;m++) p2[i][j][m]=0.;
+  if(Nd==1)
+  { 
+    for(i=0; i<=18; i++)
+      q[i]=p[0][0][i]; 
+    return;
+  }
+  
+  for(i=0; i<6; i++)
+    for(j=0; j<6; j++)
+      for(m=0; m<19; m++)
+        p2[i][j][m]=0.;
+    
   q2=(double*)malloc(sizeof(double)* (Np+1));
-  for(i=0;i<=Np;i++) q[i]=0;
+  for(i=0; i<=Np; i++)
+    q[i]=0;
   cont=-1;
-  for(i=0;i<Nd;i++){
-    for(k=0;k<=Np;k++) q2[k]=0;
+  
+  for(i=0; i<Nd; i++)
+  {
+    for(k=0; k<=Np; k++) 
+      q2[k]=0;
     cont*=-1;
-    for(k=0;k<(Nd-1);k++){
-      for(l=0;l<(Nd-1);l++){
-        for(m=0;m<=Np;m++){ p2[k][l][m]= p[k+1][l>=i?l+1:l][m];}
+    for(k=0; k<(Nd-1); k++)
+    {
+      for(l=0; l<(Nd-1); l++)
+      {
+        for(m=0; m<=Np; m++)
+        { 
+          p2[k][l][m]= p[k+1][l >= i ? l+1 : l][m];
+        }
       }
     }
     ami_polynom_determinant(p2,Np,Nd-1,q2);
-    if(cont<0) for(m=0;m<=Np;m++) q2[m]=-q2[m];
+    
+    if(cont < 0) 
+      for(m=0; m<=Np; m++)
+        q2[m]=-q2[m];
+    
     q=ami_1v_polynom_multiplication(p[0][i],Np,q2,Np,q);
   }
   free(q2);
@@ -508,12 +599,14 @@ AMI_DLL_CPP double ami_2v_polynom_evaluation(
    int N1,   /* DEGREE OF POLYNOM 1 (INPUT)*/
    double x,double y)  /* POINT COORDINATE WHERE THE POLYNOM WILL BE EVALUATED (INPUT) */
 {
-  int i,j/*,k*/;
+  int i, j/*,k*/;
   double *p,*q,paso;
   p=(double*)malloc(sizeof(double)*(N1+1));
   q=(double*)malloc(sizeof(double)*(N1+1));
-  for(i=0;i<=N1;i++){
-    for(j=0;j<=N1;j++) p[j]=pt1[i][j];
+  for(i=0;i<=N1;i++)
+  {
+    for(j=0; j<=N1; j++) 
+      p[j]=pt1[i][j];
     q[i]=ami_polynomial_evaluation(p,N1,y);
   }
   paso=ami_polynomial_evaluation(q,N1,x);
@@ -540,18 +633,23 @@ AMI_DLL_CPP void ami_2v_polynom_to_1v_polynom(
    double z,  /* POINT WHERE THE 2 VARIABLE POLYNOM IS GOING TO BE EVALUATED */
    int flat)  /* VARIABLE WHERE THE POLYNOM IS GOING TO BE EVALUATED */
 {
-  int i,j/*,k*/;
+  int i, j/*,k*/;
   double *p;
   p=(double*)malloc(sizeof(double)*(N1+1));
   if(flat==1){
-    for(i=0;i<=N1;i++){
-      for(j=0;j<=N1;j++) p[j]=pt1[i][j];
+    for(i=0; i<=N1; i++)
+    {
+      for(j=0; j<=N1 ;j++)
+        p[j]=pt1[i][j];
       p3[i]=ami_polynomial_evaluation(p,N1,z);
     }
   }
-  else{
-    for(i=0;i<=N1;i++){
-      for(j=0;j<=N1;j++) p[j]=pt1[j][i];
+  else
+  {
+    for(i=0; i<=N1; i++)
+    {
+      for(j=0; j<=N1; j++) 
+        p[j]=pt1[j][i];
       p3[i]=ami_polynomial_evaluation(p,N1,z);
     }
   }
@@ -579,11 +677,13 @@ AMI_DLL_CPP double* ami_1v_polynom_multiplication(
 {
   int i,j;
   /* WE MULTIPLY THE POLYNOMS */
-  for(i=0;i<=N1;i++){
-    if(pt1[i]!=0){
-      for(j=0;j<=N2;j++)
-        if(pt2[j]!=0)
-          pt3[i+j]+=pt1[i]*pt2[j];
+  for(i=0; i<=N1; i++)
+  {
+    if(pt1[i] != 0)
+    {
+      for(j=0; j<=N2; j++)
+        if(pt2[j] != 0)
+          pt3[i+j] += pt1[i]*pt2[j];
     }
   }
   return(pt3);
@@ -608,14 +708,17 @@ AMI_DLL_CPP void ami_2v_polynom_multiplication(
   int N2, /* DEGREE OF POLYNOM 2 (INPUT) */
   double **pt3) /* OUTPUT POLYNOM (INPUT - OUTPUT)*/
 {
-  int i,j,k,l;
-  for(i=0;i<=N1;i++){
-    for(j=0;j<=N1;j++){
-      if(pt1[i][j]!=0){
-        for(k=0;k<=N2;k++)
-          for(l=0;l<=N2;l++)
-            if(pt2[k][l]!=0 )
-              pt3[i+k][j+l]+=pt1[i][j]*pt2[k][l];
+  int i, j, k, l;
+  for(i=0; i<=N1; i++)
+  {
+    for(j=0; j<=N1; j++)
+    {
+      if(pt1[i][j] != 0)
+      {
+        for(k=0; k<=N2; k++)
+          for(l=0; l<=N2; l++)
+            if(pt2[k][l] != 0 )
+              pt3[i+k][j+l] += pt1[i][j]*pt2[k][l];
       }
     }
   }
@@ -638,27 +741,36 @@ AMI_DLL_CPP int ami_RootCubicPolynomial(
     double *x) /* POLINOMIAL ROOTS */
 {
   double a1,a2,a3,Q,R,S,T,D,A;
-  if(N!=3 || a[3]==0) return(-100000);
+  if(N!=3 || a[3]==0)
+    return(-100000);
   a1=a[2]/a[3];
   a2=a[1]/a[3];
   a3=a[0]/a[3];
   Q=(3*a2-a1*a1)/9.;
   R=(9*a1*a2-27*a3-2*a1*a1*a1)/54.;
   D=Q*Q*Q+R*R;
-  if(D>0){
+  if(D > 0)
+  {
     S=R+sqrt(D);
     T=R-sqrt(D);
-    if(S>0) S=pow(S,(double)1./3.);
-    else S=-pow(-S,(double)1./3.);
-    if(T>0) T=pow(T,(double)1./3.);
-    else T=-pow(-T,(double)1./3.);
+    if(S > 0)
+      S=pow(S,(double)1./3.);
+    else
+      S=-pow(-S,(double)1./3.);
+    if(T > 0)
+      T=pow(T,(double)1./3.);
+    else
+      T=-pow(-T,(double)1./3.);
     x[0]=S+T-a1/3.;
     return(1);
   }
-  else{
+  else
+  {
     double PI2=acos(-1.);
-    if(Q!=0) A=acos(R/sqrt(-Q*Q*Q));
-    else A=0;
+    if(Q != 0)
+      A=acos(R/sqrt(-Q*Q*Q));
+    else
+      A = 0;
     //printf("Q=%lf,R=%lf,S=%lf,T=%lf,D=%lf,A=%lf,PI=%lf\n",Q,R,S,T,D,A,PI2);
     Q=2.*sqrt(-Q);
     x[0]=Q*cos(A/3.)-a1/3.;
@@ -686,14 +798,14 @@ AMI_DLL_CPP int ami_RootCubicPolynomial(
  * \author Luis Alvarez
  */
 AMI_DLL_CPP double ami_polynomial_evaluation(
-  double *a, /* POLYNOM COEFICIENT */
+  const double *a, /* POLYNOM COEFICIENT */
   int Na, /* POLYNOM DEGREE */
   double x) /* POINT WHERE THE POLYNOM IS EVALUATED */
 {
-  double sol=a[Na];
-  int i;
-  for(i=Na-1;i>-1;i--) sol=sol*x+a[i];
-  return(sol);
+  double sol = a[Na];
+  for(int i = Na - 1; i > -1; i--)
+    sol = sol * x + a[i];
+  return sol;
 }
 
 /**

@@ -9,8 +9,9 @@ COPT	= -O3 -fopenmp
 else
 COPT	= -O3
 endif
+COPT	= -O0
 
-CFLAGS	= -Wall -Wextra $(COPT)
+CFLAGS	= -Wall -Wextra $(COPT) -std=c++11 -g
 LDFLAGS	+= -lpng -lm
 
 lens_distortion_correction_2p_iterative_optimization:\

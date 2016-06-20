@@ -285,8 +285,7 @@ void invert(ami::image<unsigned char> &input,
 void print_function_syntax_lens_distortion_correction_2p_iterative_optimization()
 {
 	cout << "FUNCTION SYNTAX:" << endl;
-	cout << "exe_file  input.png  output_canny.png  output_hough.png ";
-	cout << "output_corrected_image.png high_treshold_Canny ";
+	cout << "exe_file  /data/input/  /data/output/";
 	cout << "initial_distortion_parameter_hough ";
 	cout << "final_distortion_parameter_hough ";
 	cout << "distance_point_line_max_hough ";
@@ -299,13 +298,8 @@ void print_function_syntax_lens_distortion_correction_2p_iterative_optimization(
 	cout << "  exe_file: executable name, by default: ";
 	cout << "lens_distortion_correction_2p_iterative_optimization"
 			 << endl;
-	cout << "  inpug.png: input image." << endl;
-	cout << "  output_canny.png: output image with the detected edges by means ";
-	cout << "of Canny method." << endl;
-	cout << "  output_hough.png: output image with the detected lines by means ";
-	cout << "of improved Hough transform." << endl;
-	cout << "  output_corrected_image.png: output image with the corrected ";
-	cout << "distortion." << endl;
+	cout << "  /data/input/: input directory." << endl;
+	cout << "  /data/output/: output directory.";
 	cout << "  high_threshold_Canny: float value for the high threshold of the ";
 	cout << "Canny method (between 0.7 and 1.0)" << endl;
 	cout << "  initial_distortion_parameter: float value for the initial ";
@@ -319,13 +313,11 @@ void print_function_syntax_lens_distortion_correction_2p_iterative_optimization(
 	cout << "  type_of_lens_distortion_model: type of the lens distortion model for ";
 	cout << "the correction of the distortion (pol or div)" << endl;
 	cout << "  center_optimization: optimization of the center of the lens ";
-	cout << "distortion model (True or False)" << endl;
-  cout << "  primitives_file: file for saving information about the detected ";
-	cout << "primitives." <<endl << endl;
+	cout << "distortion model (True or False)" << endl << endl;
 	cout << "Example command:" << endl;
-	cout << " ./lens_distortion_correction_2p_iterative_optimization example/building.png";
-	cout << " building_canny.png building_hough.png building_corrected_image.png 0.8 ";
-	cout << "0.0 3.0 3.0 10.0 div True primitives.txt" << endl;
+	cout << " ./lens_distortion_correction_2p_iterative_optimization /data/input/";
+	cout << " /data/output/ 0.8 ";
+	cout << "0.0 3.0 3.0 10.0 div True" << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -339,80 +331,80 @@ int check_params_lens_distortion_correction_2p_iterative_optimization(char *argv
 	string error_message_numgte(" must be greater or equal to ");
 	string error_message("");
 
-	//Input image
-	string str(argv[1]);
-	int pos = str.find_last_of('.');
-	string ext = str.substr(pos+1);
-	if(ext != "png" && ext != "PNG")
-		error_message += error_message_head + "1 (input image)" +
-										 error_message_image;
+//	//Input image
+//	string str(argv[1]);
+//	int pos = str.find_last_of('.');
+//	string ext = str.substr(pos+1);
+//	if(ext != "png" && ext != "PNG")
+//		error_message += error_message_head + "1 (input image)" +
+//										 error_message_image;
 
-	//Canny image
-	str = string(argv[2]);
-	pos = str.find_last_of('.');
-	ext = str.substr(pos+1);
-	if(ext != "png" && ext != "PNG")
-		error_message += error_message_head + "2 (output Canny image)" +
-										 error_message_image;
-
-	//Hough image
-	str = string(argv[3]);
-	pos = str.find_last_of('.');
-	ext = str.substr(pos+1);
-	if(ext != "png" && ext != "PNG")
-		error_message += error_message_head + "3 (output Hough lines image)" +
-										 error_message_image;
-
-	//Corrected image
-	str = string(argv[4]);
-	pos = str.find_last_of('.');
-	ext = str.substr(pos+1);
-	if(ext != "png" && ext != "PNG")
-		error_message += error_message_head + "4 (output corrected image)" +
-										 error_message_image;
+//	//Canny image
+//	str = string(argv[2]);
+//	pos = str.find_last_of('.');
+//	ext = str.substr(pos+1);
+//	if(ext != "png" && ext != "PNG")
+//		error_message += error_message_head + "2 (output Canny image)" +
+//										 error_message_image;
+//
+//	//Hough image
+//	str = string(argv[3]);
+//	pos = str.find_last_of('.');
+//	ext = str.substr(pos+1);
+//	if(ext != "png" && ext != "PNG")
+//		error_message += error_message_head + "3 (output Hough lines image)" +
+//										 error_message_image;
+//
+//	//Corrected image
+//	str = string(argv[4]);
+//	pos = str.find_last_of('.');
+//	ext = str.substr(pos+1);
+//	if(ext != "png" && ext != "PNG")
+//		error_message += error_message_head + "4 (output corrected image)" +
+//										 error_message_image;
 
 	//High threshold Canny
-	float num = atof(argv[5]);
+	float num = atof(argv[3]);
 	if(num <= 0.7)
-		error_message += error_message_head + "5 (high threshold Canny)" +
+		error_message += error_message_head + "3 (high threshold Canny)" +
 										 error_message_numgt + "0.7\n";
 
 	//Initial distortion parameter
-	num = atof(argv[6]);
+	num = atof(argv[4]);
 	if(num<-0.5)
-		error_message += error_message_head + "6 (initial distortion parameter)" +
+		error_message += error_message_head + "4 (initial distortion parameter)" +
 										 error_message_numgte + "-0.5\n";
 
 	//Final distortion parameter
-	num = atof(argv[7]);
-	if(num < atof(argv[6]))
-		error_message += error_message_head + "7 (final distortion parameter)" +
-										 error_message_numgte + argv[6]+"\n";
+	num = atof(argv[5]);
+	if(num < atof(argv[4]))
+		error_message += error_message_head + "5 (final distortion parameter)" +
+										 error_message_numgte + argv[4]+"\n";
 
 	//Maximum distance between points and line
-	num = atof(argv[8]);
+	num = atof(argv[6]);
 	if(num < 0.0)
 		error_message += error_message_head +
-										 "8 (maximum distance between points and line)" +
+										 "6 (maximum distance between points and line)" +
 										 error_message_numgte + "0.0\n";
 
 	//Maximum difference between point angle and line angle
-	num = atof(argv[9]);
+	num = atof(argv[7]);
 	if(num < 0.0 || num > 45.0)
-		error_message += error_message_head + "9 (maximum difference between point"+
+		error_message += error_message_head + "7 (maximum difference between point"+
 									" angle and line angle) must be between 0.0 and 45.0\n";
 
 	//Type of the lens distortion model
-	string val(argv[10]);
+	string val(argv[8]);
 	if(val!=string("pol") && val!=string("div"))
-		error_message += error_message_head + "10 (type of the lens distortion model)."+
+		error_message += error_message_head + "8 (type of the lens distortion model)."+
 									" The allowed values are: pol or div\n";
 									
 	//Optimization of the center of the lens distortion model
 	val.clear();
-	val = string(argv[11]);
+	val = string(argv[9]);
 	if(val!=string("True") && val!=string("False"))
-		error_message += error_message_head + "11 (optimization of the center of "+
+		error_message += error_message_head + "9 (optimization of the center of "+
 									"the lens distortion model). The allowed values are: True or "+
 									"False\n";
 									
@@ -441,19 +433,17 @@ void manage_failure(char *argv[], int code)
 	ami::image<unsigned char> input(argv[1]);
 	//Write the output images as a copy of the input
 	input.write(argv[2]);
-	input.write(argv[3]);
-	input.write(argv[4]);
 	//Write output file
 	ofstream fs("output.txt");
 	fs << "Selected parameters:" << endl;
-    fs << "\t High Canny's threshold: " << argv[5] << endl;
-    fs << "\t Initial normalized distortion parameter: " << argv[6] << endl;
-    fs << "\t Final normalized distortion parameter: " << argv[7] << endl;
-    fs << "\t Maximum distance between points and line: " << argv[8] << endl;
+    fs << "\t High Canny's threshold: " << argv[3] << endl;
+    fs << "\t Initial normalized distortion parameter: " << argv[4] << endl;
+    fs << "\t Final normalized distortion parameter: " << argv[5] << endl;
+    fs << "\t Maximum distance between points and line: " << argv[6] << endl;
     fs << "\t Maximum differente between edge point and line orientations: "
-     << argv[9]	<< endl;
-		fs << "\t Model applied: " << argv[10] << endl;
-		fs << "\t Center optimization: " << argv[11] << endl;
+     << argv[7]	<< endl;
+		fs << "\t Model applied: " << argv[8] << endl;
+		fs << "\t Center optimization: " << argv[9] << endl;
     fs << "-------------------------" << endl;
     fs << "Results: " << endl;
 	fs << "\t Program failed:" << endl;
@@ -469,7 +459,7 @@ void manage_failure(char *argv[], int code)
 	}
 	fs.close();
 	//And write an empty output file of primitives information
-	ofstream pf(argv[10]);
+	ofstream pf(argv[8]);
 	pf.close();
 }
 
@@ -555,7 +545,7 @@ int ami2_gauss(double **A,double *b,int N)
        }
     }
     if(max<10e-30){
-      printf("Sistema no tiene Solucion 0\n");
+      printf("System does not have solution 0\n");
       for(i=0;i<N;i++)
         free(PASO[i]);
       free(PASO);
@@ -574,7 +564,7 @@ int ami2_gauss(double **A,double *b,int N)
     }
   }
   if(fabs(PASO[N-1][N-1])<10e-30){
-      printf("Sistema no tiene Solucion 1\n");
+      printf("System does not have solution 1\n");
       for(i=0;i<N;i++)
        free(PASO[i]);
       free(PASO);

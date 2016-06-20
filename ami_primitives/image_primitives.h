@@ -172,7 +172,8 @@ public :
 
  int read (char *name);
 
- int write(char *name/**Filename*/)
+ int write(const std::string& name) { return write(name.c_str()); }
+ int write(const char *name/**Filename*/)
 {
   FILE *f;
   double v1,v2,v3;
@@ -188,7 +189,7 @@ public :
   fprintf(f,"Number of distortion parameters = %d\n",(int)distortion.get_d().size());
   for(unsigned int i=0;i<distortion.get_d().size();i++)
   {
-          fprintf(f, "value of distortion parameter %d  = %.20g\n",i,distortion.get_d()[i]);
+    fprintf(f, "value of distortion parameter %d  = %.20g\n",i,distortion.get_d()[i]);
   }
   //SAVE POINTS
   /*fprintf(f,"%d POINTS\n",(int)points.size());
@@ -199,23 +200,21 @@ public :
 
   //SAVE STRAIGHT
   fprintf(f,"\nNUMBER OF LINES = %d \n",(int)lines.size());
-  for(unsigned int i=0;i<lines.size();i++)
+  for(unsigned int i = 0; i < lines.size(); i++)
   {
-          fprintf(f,"\nline %d \n",(int) i);
-          v1 = lines[i].get_a();
-          v2 = lines[i].get_b();
-          v3 = lines[i].get_c();
-          fprintf(f,"line parameters = %.20g %.20g %.20g\n",v1,v2,v3);
-          fprintf(f,"line points : \n");
-          std::vector<point2d<double> > puntos = lines[i].get_points();
-          fprintf(f,"%d\n",(int)puntos.size());
-          for(unsigned int j=0;j<puntos.size();j++)
-          {
-              fprintf(f, "%.20g %.20g\n",puntos[j].x,puntos[j].y);
-          }
+    fprintf(f,"\nline %d \n",(int) i);
+    v1 = lines[i].get_a();
+    v2 = lines[i].get_b();
+    v3 = lines[i].get_c();
+    fprintf(f,"line parameters = %.20g %.20g %.20g\n",v1,v2,v3);
+    fprintf(f,"line points : \n");
+    const std::vector<point2d<double> >& puntos = lines[i].get_points();
+    fprintf(f,"%d\n",(int)puntos.size());
+    for(unsigned int j=0;j<puntos.size();j++)
+    {
+        fprintf(f, "%.20g %.20g\n",puntos[j].x,puntos[j].y);
+    }
   }
-
-
 
   /* WE STORE 3D POINTS PROJECTED COORDINATES*/
   //fprintf(f,"\n%d 3D_POINTS_PROJECTED_COORDINATES \n",(int)projected_3dpoints.size());

@@ -43,19 +43,23 @@ double precision /** PRECISION TO COMPUTE THE GAUSSIAN CONVOLUTION BIGGER
 IS THE PRECISION, MORE ITERATIONS TO COMPUTE THE CONVOLUTION */)
 {
 
-  if(img.get_roi().size()==6){
+  if(img.get_roi().size()==6)
+  {
     img.get_roi_image(img_conv);
   }
-  else{
+  else
+  {
     if(img.width()!=img_conv.width() ||  img.height()!=img_conv.height() ||
-       img.nChannels()!=img_conv.nChannels()){
+       img.nChannels()!=img_conv.nChannels())
+    {
       img_conv=ami::image<U>(img.width(),img.height(),img.nChannels());
     }
-    int k,k_end=img.width()*img.height()*img.nChannels();
+    int k, k_end=img.width()*img.height()*img.nChannels();
 		#ifdef _OPENMP
     #pragma omp parallel for shared(k_end) private(k)
 		#endif
-    for(k=0;k<k_end;k++) img_conv[k]= (U) img[k];
+    for(k=0; k<k_end; k++)
+      img_conv[k] = (U) img[k];
   }
 
   unsigned int width=img_conv.width();
@@ -64,27 +68,31 @@ IS THE PRECISION, MORE ITERATIONS TO COMPUTE THE CONVOLUTION */)
   unsigned int image_size=width*height;
   unsigned int image_size_total=image_size*nChannels;
 
-  if(precision<0) precision=0;
+  if(precision < 0)
+    precision = 0;
 
-  unsigned int Nc_x=(unsigned int) (precision*sigma_x>1?precision*sigma_x:1);
-  unsigned int Nc_y=(unsigned int) (precision*sigma_y>1?precision*sigma_y:1);
-  unsigned int Nc_a=(Nc_x>Nc_y)?Nc_x:Nc_y;
-  Nc_x=Nc_y=Nc_a;
-  double t_y=sigma_x*sigma_x/(2*Nc_x);
-  double t_x=sigma_y*sigma_y/(2*Nc_y);
-  double l_x,v_x,l_y,v_y,l_x_1,l_y_1;
-	l_x=v_x=l_y=v_y=l_x_1=l_y_1=0.;
+  unsigned int Nc_x=(unsigned int) (precision*sigma_x>1 ? precision*sigma_x : 1);
+  unsigned int Nc_y=(unsigned int) (precision*sigma_y>1 ? precision*sigma_y : 1);
+  unsigned int Nc_a=(Nc_x>Nc_y) ? Nc_x : Nc_y;
+  Nc_x = Nc_y = Nc_a;
+  double t_y = sigma_x*sigma_x/(2*Nc_x);
+  double t_x = sigma_y*sigma_y/(2*Nc_y);
+  double l_x, v_x, l_y, v_y, l_x_1, l_y_1;
+	l_x = v_x = l_y = v_y = l_x_1 = l_y_1 = 0.;
 
   // WE CHECK IS STANDARD DEVIATIONS ARE 0
-  if(t_x==0 && t_y==0) return;
+  if(t_x==0 && t_y==0) 
+    return;
 
   // PARAMETERS X AND Y
-  if(t_x>0){
+  if(t_x > 0)
+  {
      l_x=(float)(1.+2.*t_x-sqrt((double) 4*t_x+1))/(2*t_x);
      v_x=l_x/t_x;
      l_x_1=(1-l_x);
   }
-  if(t_y>0){
+  if(t_y > 0)
+  {
      l_y=(float)(1.+2.*t_y-sqrt((double) 4*t_y+1))/(2*t_y);
      v_y=l_y/t_y;
      l_y_1=(1-l_y);
@@ -92,65 +100,78 @@ IS THE PRECISION, MORE ITERATIONS TO COMPUTE THE CONVOLUTION */)
 
   //MAIN LOOP
   int cont;
-  int c,y,x,x_end,m,y_end;
-  for(cont=0;cont<(int)Nc_a;cont++){
-    if(t_y>0){
+  int c, y, x, x_end, m, y_end;
+  for(cont=0; cont<(int)Nc_a; cont++)
+  {
+    if(t_y > 0)
+    {
 			#ifdef _OPENMP
       #pragma omp parallel \
       shared(width,image_size_total,image_size,l_y,v_y,l_y_1) \
       private(c,x,y,m,x_end)
 			#endif
-      for(c=0;c<(int)image_size_total;c+=image_size){
+      for(c=0; c<(int)image_size_total; c+=image_size)
+      {
         #ifdef _OPENMP
 				#pragma omp for nowait
 				#endif
-        for(y=0;y<(int)image_size;y+=width){
+        for(y=0; y<(int)image_size; y+=width)
+        {
           m=c+y;
           vector <U> paso(width);
           paso[0]= img_conv[m]/l_y_1;
           x_end=m+width;
           unsigned int n=1;
-          for(x=m+1;x<x_end;x++,n++){
+          for(x=m+1; x<x_end; x++,n++)
+          {
             paso[n]= img_conv[x]+l_y*paso[n-1];
           }
           img_conv[x_end-1]=paso[width-1]/l_y_1;
           n=width-2;
-          for(x=x_end-2;x>m;x--,n--){
+          for(x=x_end-2; x>m; x--,n--)
+          {
             img_conv[x]= paso[n]+l_y*img_conv[x+1];
           }
           img_conv[x]= paso[n]+l_y*img_conv[x+1];
-          for(x=m;x<x_end;x++){
+          for(x=m; x<x_end; x++)
+          {
            img_conv[x]*=v_y;
           }
         }
       }
     }
-    if(t_y>0){
+    if(t_y > 0)
+    {
 		 #ifdef _OPENMP
      #pragma omp parallel \
      shared(width,height,image_size_total,image_size,l_x,v_x,l_x_1) \
      private(c,x,y,m,y_end)
 		 #endif
-      for(c=0;c<(int)image_size_total;c+=image_size){
+      for(c=0; c<(int)image_size_total; c+=image_size)
+      {
         #ifdef _OPENMP
 				#pragma omp for nowait
 				#endif
-        for(x=0;x<(int)width;x++){
+        for(x=0; x<(int)width; x++)
+        {
           m=c+x;
           vector <U> paso(height);
           paso[0]= img_conv[m]/l_x_1;
           y_end=m+image_size;
           unsigned int n=1;
-          for(y=m+width;y<y_end;y+=width,n++){
+          for(y=m+width; y<y_end; y+=width,n++)
+          {
             paso[n]= img_conv[y]+l_x*paso[n-1];
           }
           img_conv[y_end-width]=paso[height-1]/l_x_1;
           n=height-2;
-          for(y=y_end-2*width;y>m;y-=width,n--){
+          for(y=y_end-2*width; y>m; y-=width,n--)
+          {
             img_conv[y]= paso[n]+l_x*img_conv[y+width];
           }
           img_conv[y]= paso[n]+l_x*img_conv[y+width];
-          for(y=m;y<y_end;y+=width){
+          for(y=m; y<y_end; y+=width)
+          {
            img_conv[y]*=v_x;
           }
         }
@@ -175,7 +196,8 @@ void grad(
   const bool NeigborhoodType /** =0 means 5 size neighborhood,
                                  =9  means 9 size neighborhood*/)
 {
-  if(img.get_roi().size()==6){
+  if(img.get_roi().size() == 6)
+  {
     ami::image<T> img2;
     img.get_roi_image(img2);
     grad(img2,grad_x,grad_y,NeigborhoodType);
@@ -192,31 +214,35 @@ void grad(
   unsigned int width_1=width-1;
 
   if((int)width!=grad_x.width() ||  (int)height!=grad_x.height() ||
-     (int)nChannels!=grad_x.nChannels()){
+     (int)nChannels!=grad_x.nChannels())
+  {
     grad_x=ami::image<U>(width,height,nChannels);
   }
 
   if((int)width!=grad_y.width() ||  (int)height!=grad_y.height() ||
-     (int)nChannels!=grad_y.nChannels()){
+     (int)nChannels!=grad_y.nChannels())
+  {
     grad_y=ami::image<U>(width,height,nChannels);
   }
 
-  if(NeigborhoodType==0){
-
+  if(NeigborhoodType == 0)
+  {
     //ami::utilities u;
     vector < vector <unsigned int> > b=boundary_neighborhood_5n(width,height);
-    int m,c,y,k,k_end,b_size=b.size();
+    int m, c, y, k, k_end, b_size=b.size();
 
 		#ifdef _OPENMP
     #pragma omp parallel \
     shared(width,width_1,total_image_size,size_image,size_image_width,b,b_size)\
     private(c,y,m,k,k_end)
 		#endif
-    for(c=0;c<(int)total_image_size;c+=size_image){
+    for(c=0; c<(int)total_image_size; c+=size_image)
+    {
       #ifdef _OPENMP
 			#pragma omp for nowait
 			#endif
-      for(y=width;y<(int)size_image_width;y+=width){
+      for(y=width; y<(int)size_image_width; y+=width)
+      {
         m=c+y;
         k_end=m+width_1;
         for(k=m+1; k<k_end; k++){
@@ -227,32 +253,37 @@ void grad(
 			#ifdef _OPENMP
       #pragma omp for nowait
 			#endif
-      for(int k=0;k<b_size;k++){ // IMAGE BOUNDARY GRADIENT ESTIMATION
+      for(int k=0; k<b_size; k++)
+      { // IMAGE BOUNDARY GRADIENT ESTIMATION
         grad_y[b[k][0]+c]=(U) img[b[k][2]+c]- (U) img[b[k][1]+c];
         grad_x[b[k][0]+c]=(U) img[b[k][4]+c]- (U) img[b[k][3]+c];
       }
     }
   }
-  else{
+  else
+  {
     vector < vector <unsigned int> > b=boundary_neighborhood_9n(width,height);
     double coef1,coef2,c1,d1;
     coef1=sqrt((double) 2.);
     coef2=0.25*(2.-coef1);
     coef1=0.5*(coef1-1);
-    int m,c,y,k,l,k_end,b_size=b.size();
+    int m, c, y, k, l, k_end, b_size=b.size();
     #ifdef _OPENMP
 		#pragma omp parallel \
     shared(width,width_1,total_image_size,size_image,size_image_width,b,b_size,\
            coef1,coef2) private(c,y,m,k,k_end,c1,d1)
 		#endif
-    for(c=0;c<(int)total_image_size;c+=size_image){
+    for(c=0; c<(int)total_image_size; c+=size_image)
+    {
       #ifdef _OPENMP
 			#pragma omp for nowait
 			#endif
-      for(y=width;y<(int)size_image_width;y+=width){
+      for(y=width; y<(int)size_image_width; y+=width)
+      {
         m=c+y;
         k_end=m+width_1;
-        for(k=m+1; k<k_end; k++){
+        for(k=m+1; k<k_end; k++)
+        {
           c1=img[k+width+1]-img[k-width-1];
           d1=img[k-width+1]-img[k+width-1];
           grad_y[k]=(U)(coef1*((U) img[k+width]-(U)img[k-width])+coef2*(c1-d1));
@@ -262,7 +293,8 @@ void grad(
 			#ifdef _OPENMP
       #pragma omp for nowait
 			#endif
-      for(l=0;l<b_size;l++){ // IMAGE BOUNDARY GRADIENT ESTIMATION
+      for(l=0; l<b_size; l++)
+      { // IMAGE BOUNDARY GRADIENT ESTIMATION
         c1=img[c+b[l][6]]-img[c+b[l][7]];
         d1=img[c+b[l][5]]-img[c+b[l][8]];
         grad_y[c+b[l][0]]=(U)(coef1*((U) img[c+b[l][2]]- (U) img[c+b[l][1]])+
@@ -285,47 +317,66 @@ void grad(
  */
 float ami_median_float(int k, int n, float *x)
 {
-	int i,ir,j,l,mid;
-	float a,*y,paso;
+	int i, ir, j, l, mid;
+	float a, *y, paso;
 	ami_malloc1d(y,float,n);
-	for(int mm=0;mm<n;mm++) y[mm]=x[mm];
+	for(int mm=0; mm<n; mm++)
+    y[mm]=x[mm];
 
 	l=0;
 	ir=n-1;
-	for (;;) {
-		if (ir <= l+1) {
-			if (ir == l+1 && y[ir] < y[l]) {
-				paso=y[l]; y[l]=y[ir]; y[ir]=paso;
+	for (;;)
+  {
+		if (ir <= l+1)
+    {
+			if (ir == l+1 && y[ir] < y[l])
+      {
+				paso=y[l];
+        y[l]=y[ir];
+        y[ir]=paso;
 			}
             a=y[k];
 			free(y);
 			return a;
-		} else {
+		} 
+    else 
+    {
 			mid=(l+ir) >> 1;
 			paso=y[mid]; y[mid]=y[l+1]; y[l+1]=paso;
-			if (y[l] > y[ir]) {
+			if (y[l] > y[ir])
+      {
 				paso=y[l]; y[l]=y[ir]; y[ir]=paso;
 			}
-			if (y[l+1] > y[ir]) {
+			if (y[l+1] > y[ir])
+      {
 				paso=y[l+1]; y[l+1]=y[ir]; y[ir]=paso;
 			}
-			if (y[l] > y[l+1]) {
+			if (y[l] > y[l+1])
+      {
 				paso=y[l]; y[l]=y[l+1]; y[l+1]=paso;
-
 			}
 			i=l+1;
 			j=ir;
 			a=y[l+1];
-			for (;;) {
-				do i++; while (y[i] < a);
-				do j--; while (y[j] > a);
-				if (j < i) break;
+			for (;;) 
+      {
+				do i++;
+        while (y[i] < a);
+        
+				do j--;
+        while (y[j] > a);
+        
+				if (j < i)
+          break;
+        
 				paso=y[i]; y[i]=y[j]; y[j]=paso;
 			}
 			y[l+1]=y[j];
 			y[j]=a;
-			if (j >= k) ir=j-1;
-			if (j <= k) l=i;
+			if (j >= k)
+        ir=j-1;
+			if (j <= k)
+        l=i;
 		}
 	}
 
@@ -369,8 +420,8 @@ void canny(ami::image<T> input /**INPUT IMAGE (GRAY SCALE)*/,
 			 float *coseno /**COSINUS OF THE ORIENTATION*/,
 			 int *x /**COORDINATE X OF THE POSITION*/,
 			 int *y /**COORDINATE Y OF THE POSITION*/,
-			 float per_low /**PERCENTAGE FOR THE LOW THRESHOLD (BETWEEN 0 AND 1)*/,
-			 float per_high /**PERCENTAGE FOR THE HIGH THRESHOLD (BETWEEN 0 AND 1)*/)
+			 const float per_low /**PERCENTAGE FOR THE LOW THRESHOLD (BETWEEN 0 AND 1)*/,
+			 const float per_high /**PERCENTAGE FOR THE HIGH THRESHOLD (BETWEEN 0 AND 1)*/)
 {
 	//cout << "AMI::FILTERS::CANNY STARTS" << endl;
 	bool neighborhoodtype = 9; //9 NEIGHBOURS FOR THE GRADIENT
@@ -563,8 +614,8 @@ template<class T>
 ami::subpixel_image_contours canny(
 ami::image<T> input /**INPUT IMAGE (GRAY SCALE)*/,
 ami::image<T> &edges /**OUTPUT IMAGE WITH THE EDGES*/,
-float canny_low_threshold /**PERCENTAGE FOR THE LOW THRESHOLD (BETWEEN 0 AND 1)*/,
-float canny_high_threshold /**PERCENTAGE FOR THE HIGH THRESHOLD (BETWEEN 0 AND 1)*/)
+const float canny_low_threshold /**PERCENTAGE FOR THE LOW THRESHOLD (BETWEEN 0 AND 1)*/,
+const float canny_high_threshold /**PERCENTAGE FOR THE HIGH THRESHOLD (BETWEEN 0 AND 1)*/)
 {
   int size_=input.width()*input.height();
   float *seno   = new float[size_];//edge point orientation
@@ -578,8 +629,10 @@ float canny_high_threshold /**PERCENTAGE FOR THE HIGH THRESHOLD (BETWEEN 0 AND 1
 
   //Filling subpixel_image_contours object to call Hough transform
   ami::subpixel_image_contours contours(input.width(),input.height());
-  for(int i=0; i<size_; i++){
-    if(edges[i]>0){ //edge point condition
+  for(int i=0; i<size_; i++)
+  {
+    if(edges[i]>0)
+    { //edge point condition
       contours.get_c()[i]      = true;
       contours.get_x()[i]      = (float)x_pos[i];
       contours.get_y()[i]      = (float)y_pos[i];

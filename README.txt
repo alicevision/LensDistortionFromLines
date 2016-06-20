@@ -74,22 +74,20 @@ Alternatively, you can manually compile
 
 # USAGE
 
-This program takes 11 parameters:
-“exe_file  input.png output_canny.png output_hough.png output_corrected_image.png high_threshold_Canny initial_distortion_parameter final_distortion_parameter distance_point_line_max_hough angle_point_orientation_max_difference type_of_lens_distortion_model center_optimization primitives_file” 
+This program takes 10 parameters:
+“exe_file  input_directory output_directory high_threshold_Canny initial_distortion_parameter final_distortion_parameter distance_point_line_max_hough angle_point_orientation_max_difference type_of_lens_distortion_model center_optimization primitives_file” 
 
-* 'exe_file ' 		                        : exe file (called ./lens_distortion_correction_2p_iterative_optimization) 
-* 'input.png'                             : input image
-* 'output_canny.png'                      : output image wiht the detected edges by means of Canny method
-* 'output_hough.png'                      : output image with the detected lines by means fof improved Hough transform
-* 'output_corrected_image.png'            : output image with the corrected distortion
+* 'exe_file '                             : exe file (called ./lens_distortion_correction_2p_iterative_optimization) 
+* 'input_directory'                       : input directory
+* 'output_directory'                      : output directory
 * 'high_threshold_Canny'                  : float value for the high threshold of the Canny method (between 0.7 and 1.0)
-* 'initial_distortion_parameter'          : float value for the initial normalized distortion parameter (greater or equeal to -0.5)
+* 'initial_distortion_parameter'          : float value for the initial normalized distortion parameter (greater or equal to -0.5)
 * 'final_distortion_parameter'            : float value for the final normalized distortion parameter (greater or equal to the initial value)
 * 'distance_point_line_max_hough'         : maximum distance allowed between points and associated lines
 * 'angle_point_orientation_max_difference': maximum difference (in degrees) of the point orientation angle and the line angle
 * 'type_of_lens_distortion_model'         : type of the lens distortion model for the correction of the distortion (pol or div)
 * 'center_optimization'                   : optimization of the center of the lens distortion model (True or False)
-* 'primitives_file'                       : output file for saving information about the detected primitives using the improved Hough transform
+
 
 # SOURCE CODE ORGANIZATION
 
@@ -111,7 +109,7 @@ The source code is organized in the following folders :
 You can test the program with the provided test image (building.png) in the 
 following way:
 
-./lens_distortion_correction_2p_iterative_optimization example/building.png example/building_canny.png example/building_hough.png example/building_corrected_image.png 0.8 0.0 3.0 3.0 10.0 div True example/primitives.txt
+./lens_distortion_correction_2p_iterative_optimization /data/input/ /data/output/ 0.8 0.0 3.0 3.0 10.0 div True
 
 Furthermore, you can compare your results with the results present inside the folder 'example'
 

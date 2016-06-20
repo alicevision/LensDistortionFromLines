@@ -150,7 +150,7 @@ AMI_DLL_H int ami_RootCubicPolynomial(double *a,int N,double *x);
 /**************************************************************
  EVALUATION OF A POLYNOM USING HORNER ALGORITHM
  ************************************************************/
-AMI_DLL_H double ami_polynomial_evaluation(double *a,int Na,double x);
+AMI_DLL_H double ami_polynomial_evaluation(const double *a,int Na,double x);
 
 /***************************************************************************
   FUNCTION TO ADD THE INFORMATION OF A LINE POINT SEQUENCE TO THE 4 DEGREE

@@ -12,7 +12,9 @@
 #define LINE_EXTRACTION_H
 #include "subpixel_image_contours.h"
 #include "image_primitives.h"
-											
+#include <iostream>
+#include <string>
+
 double line_equation_distortion_extraction_improved_hough(
                   const subpixel_image_contours &subpixel_contours,
                   image_primitives &image_primitive,

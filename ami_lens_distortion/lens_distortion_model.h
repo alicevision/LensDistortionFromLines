@@ -97,7 +97,6 @@ public:
   * \author Luis Alvarez
   */
  point2d<double> evaluation_quotient(const point2d<double> &p) const;
- point2d<double> evaluation_quotient(point2d<double> &p);
  
   /**
   * \fn point2d<double> evaluation(point2d<double> &p)
@@ -175,12 +174,7 @@ public:
 
  void reset(){d.clear();  c.x=0; c.y=0; /*H.reset();*/}
 
-
 };
-
-
-
-
 }
 
 #endif

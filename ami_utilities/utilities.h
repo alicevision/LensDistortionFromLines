@@ -39,11 +39,11 @@
 	if ( width > 0 && height > 0){\
           direccion=(tipo **) malloc(sizeof(tipo *)*(height)); \
           if (direccion == NULL){\
-            printf("\nMemoria insuficiente.\n");int val = scanf("%d",&ml);\
+            printf("\nInsufficient memory.\n");int val = scanf("%d",&ml);\
             if(val==EOF) printf("Read error\n");}\
           direccion[0]=(tipo *)malloc(sizeof(tipo)*(width)*(height)); \
           if (direccion[0] == NULL){free(direccion); direccion = NULL;\
-            printf("\nMemoria insuficiente.\n");int val=scanf("%d",&ml);\
+            printf("\nInsufficient memory.\n");int val=scanf("%d",&ml);\
             if(val==EOF) printf("Read error\n");}\
           for(ml=0;ml<(height);ml++) direccion[ml]=&(direccion[0][ml*(width)]);\
           for(ml=0;ml<height;ml++) for(mk=0;mk<width;mk++) direccion[ml][mk]=0;\
@@ -62,7 +62,7 @@
 	if (size > 0){\
 	    direccion=(tipo *) malloc(sizeof(tipo)*(size)); \
 		if (direccion == NULL)\
-		{int ml; printf("\nMemoria insuficiente.\n");int val=scanf("%d",&ml);\
+		{int ml; printf("\nInsufficient memory.\n");int val=scanf("%d",&ml);\
 		if(val==EOF) printf("Read error\n");}}\
 	else direccion = NULL;}
 
@@ -87,7 +87,7 @@ std::vector < std::vector <unsigned int> >
 																								int width, int height,
 																								ami::image<unsigned char> &bn)
  * \brief Draw the points detected by the improved Hough transform
- * \author Luis Alvarez and Daniel Santana-Cedrés
+ * \author Luis Alvarez and Daniel Santana-Cedrï¿½s
 */
 void drawHoughLines(image_primitives ip /**Detected primitives*/,
 										ami::image<unsigned char> &bn /**Gray level image where we
@@ -97,7 +97,7 @@ void drawHoughLines(image_primitives ip /**Detected primitives*/,
  * \fn void invert(ami::image<unsigned char> &input,
 									 ami::image<unsigned char> &output)
  * \brief Invert the colors of the input image
- * \author Luis Alvarez and Daniel Santana-Cedrés
+ * \author Luis Alvarez and Daniel Santana-Cedrï¿½s
 */
 void invert(ami::image<unsigned char> &input /**Input image*/,
             ami::image<unsigned char> &output/**Output image with the inverted
@@ -106,28 +106,28 @@ void invert(ami::image<unsigned char> &input /**Input image*/,
 /**
  * \fn print_function_syntax()
  * \brief Print the function syntax
- * \author Luis Alvarez and Daniel Santana-Cedrés
+ * \author Luis Alvarez and Daniel Santana-Cedrï¿½s
 */
 void print_function_syntax_lens_distortion_correction_2p_iterative_optimization();
 
 /**
  * \fn check_params(char *argv[])
  * \brief Check the input parameters
- * \author Luis Alvarez and Daniel Santana-Cedrés
+ * \author Luis Alvarez and Daniel Santana-Cedrï¿½s
 */
 int check_params_lens_distortion_correction_2p_iterative_optimization(char *argv[]);
 
 /**
  * \fn count_points(image_primitives ip)
  * \brief This function counts the number of points of the primitives
- * \author Luis Alvarez and Daniel Santana-Cedrés
+ * \author Luis Alvarez and Daniel Santana-Cedrï¿½s
 */
 int count_points(image_primitives ip);
 
 /**
  * \fn manage_failure(char *argv[])
  * \brief This function manages the output in case of failure
- * \author Luis Alvarez and Daniel Santana-Cedrés
+ * \author Luis Alvarez and Daniel Santana-Cedrï¿½s
 */
 void manage_failure(char *argv[], int code);
 
@@ -145,7 +145,7 @@ double update_rsqmax(point2d<double> dc, int w, int h);
 											 int w, int h, bool quo)
  * \brief This procedure computes the values of the normalized distortion
 					parameters
- * \author Luis Alvarez and Daniel Santana-Cedrés
+ * \author Luis Alvarez and Daniel Santana-Cedrï¿½s
 */
 void compute_ps(double &p1, double &p2, lens_distortion_model &ldm,
 								int w, int h, bool quo);

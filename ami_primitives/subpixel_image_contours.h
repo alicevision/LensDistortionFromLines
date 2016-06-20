@@ -14,6 +14,7 @@
  * \brief Subpixel image contour class AMI_DLL_H definition
  * \author Luis Alvarez \n \n
 */
+
 #ifndef SUBPIXEL_IMAGE_CONTOURS_H
 #define SUBPIXEL_IMAGE_CONTOURS_H
 
@@ -36,17 +37,17 @@ namespace ami
  * \brief class to store subpixel contours extracted from soccer stadium images.
  * \author Luis Alvarez
  */
-class AMI_DLL_H   subpixel_image_contours{
- bool *c/** Image contour c[i]=1 in contours points */;
- float *x/** Image with horizontal subpixel precision contour value */;
- float *y/** Image with vertical subpixel precision contour value*/;
- float *d/** Distance of the center line point to the white line border
-          contour*/;
- float *coseno /** x orientation of the center lines*/;
- float *seno /** y orientation of the center lines*/;
- int N /** Length of x,y,d,coseno,seno*/;
- int width/** Image width*/;
- int height /** Image height */;
+class AMI_DLL_H   subpixel_image_contours
+{
+ bool *c = NULL; /** Image contour c[i]=1 in contours points */
+ float *x = NULL; /** Image with horizontal subpixel precision contour value */
+ float *y = NULL; /** Image with vertical subpixel precision contour value */
+ float *d = NULL; /** Distance of the center line point to the white line border contour */
+ float *coseno = NULL; /** x orientation of the center lines*/
+ float *seno = NULL; /** y orientation of the center lines*/
+ int N = 0; /** Length of x, y, d, coseno, seno */
+ int width = 0; /** Image width */
+ int height = 0; /** Image height */
  vector<int> index; /** Index vector of the edges position */
 
 public:
@@ -56,16 +57,7 @@ public:
   * \brief Constructor without taking memory
 	* \author Luis Alvarez
   */
- subpixel_image_contours(){
-  width = 0;
-  height = 0;
-  c = NULL;
-  x = NULL;
-  y = NULL;
-  d = NULL;
-  coseno = NULL;
-  seno = NULL;
- }
+ subpixel_image_contours() {}
  
  /** \fn subpixel_image_contours(int width_c,int height_c)
 	 * \brief	Constructor taking memory
@@ -85,6 +77,8 @@ public:
 	 */
  subpixel_image_contours(const subpixel_image_contours &);
 
+ subpixel_image_contours& operator=(const subpixel_image_contours& other);
+ 
 	/**
 	 * \fn bool subpixel_empty()
 	 * \brief Determine if a subpixel_image_contours is empty
@@ -174,21 +168,21 @@ public:
   * \brief Set array c to identity contour points
 	* \author Luis Alvarez
   */
- void set_c(bool *c2/** Not described */){if(c!=NULL) free(c); c=c2;}
+ void set_c(bool *c2/** Not described */){if(c != NULL) free(c); c = c2;}
 
  /**
   * \fn void set_x(float *x2)
   * \brief Set array x of subpixel x coordinate location
 	* \author Luis Alvarez
   */
-void set_x(float *x2/** Not described */){if(x!=NULL) free(x); x=x2;}
+void set_x(float *x2/** Not described */){if(x != NULL) free(x); x = x2;}
 
  /**
   * \fn void set_y(float *y2)
   * \brief Set array y of subpixel y coordinate location
 	* \author Luis Alvarez
   */
-void set_y(float *y2/** Not described */){if(y!=NULL) free(y); y=y2;}
+void set_y(float *y2/** Not described */){if(y != NULL) free(y); y = y2;}
 
  /**
   * \fn void set_d(float *d2)
@@ -196,7 +190,7 @@ void set_y(float *y2/** Not described */){if(y!=NULL) free(y); y=y2;}
   *        contour pixel area
 	* \author Luis Alvarez
   */
- void set_d(float *d2/** Not described */){if(d!=NULL) free(d); d=d2;}
+ void set_d(float *d2/** Not described */){if(d != NULL) free(d); d = d2;}
 
  /**
   * \fn void set_coseno(float *coseno2)
@@ -204,7 +198,7 @@ void set_y(float *y2/** Not described */){if(y!=NULL) free(y); y=y2;}
 	* \author Luis Alvarez
   */
  void set_coseno(float *coseno2/** Not described */){
-   if(coseno!=NULL) free(coseno); coseno=coseno2;}
+   if(coseno != NULL) free(coseno); coseno = coseno2;}
 
  /**
   * \fn void set_seno(float *seno2)
@@ -212,36 +206,36 @@ void set_y(float *y2/** Not described */){if(y!=NULL) free(y); y=y2;}
 	* \author Luis Alvarez
   */
  void set_seno(float *seno2/** Not described */){
-   if(seno!=NULL) free(seno); seno=seno2;}
+   if(seno != NULL) free(seno); seno = seno2;}
 
  /**
   * \fn void set_width(int width2)
   * \brief Set image width
 	* \author Luis Alvarez
   */
- int set_width(int width2/** Not described */){return width=width2;}
+ int set_width(int width2/** Not described */){return width = width2;}
 
  /**
   * \fn int set_height(int height2)
   * \brief Set image height
 	* \author Luis Alvarez
   */
- int set_height(int height2/** Not described */){return height=height2;}
+ int set_height(int height2/** Not described */){return height = height2;}
 
  /**
   * \fn vector<int> get_index()
   * \brief This function returns the index vector of the edges
   * \author Luis Alvarez	
   */
- vector<int> get_index(){return index;}
- const vector<int> get_index()const {return index;}
+ vector<int>& get_index(){return index;}
+ const vector<int>& get_index()const {return index;}
 
  /**
   * \fn void set_index(vector<int> &index2)
   * \brief This method assigns an index vector with the position of the edges
   * \author Luis Alvarez	
   */
- void set_index(vector<int> &index2){index=index2;}
+ void set_index(vector<int> &index2){index = index2;}
 
  /**
   * \fn void clean(const int neighborhood_radius,const int min_neighbor_points,
