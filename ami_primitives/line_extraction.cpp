@@ -980,7 +980,7 @@ double line_equation_distortion_extraction_improved_hough(
     image_primitive.set_distortion(ld);
     image_primitive_original.set_distortion(ld);
   }
-
+  
   double dot_product_min = cos(ami_pi*angle_point_orientation_max_difference/180.);
 
   // WE COMPUTE THE POINTS OF THE LINE POINTS
@@ -997,12 +997,12 @@ double line_equation_distortion_extraction_improved_hough(
   
   if (lens_distortion_estimation == true) 
 	{
-    for(int i=0;i<(int)image_primitive.get_lines().size();i++)
+    for(int i=0; i<(int)image_primitive.get_lines().size(); i++)
 		{
-      if(image_primitive.get_lines()[i].get_points().size()>2)
+      if(image_primitive.get_lines()[i].get_points().size() > 2)
       {
-        //cout << "image_primitive_corrected.get_lines()[" << i << "].get_points().size() " << image_primitive_corrected.get_lines()[i].get_points().size() << endl;
         image_primitive_corrected.get_lines()[i].points_to_equation();
+        cout << "Nombre de points sur la ligne " << i << " dans le if1 corrected : " << image_primitive_corrected.get_lines()[i].get_points().size() << endl;
         double a,b,c;
         image_primitive_corrected.get_lines()[i].get_abc(a,b,c);
         image_primitive.get_lines()[i].set_abc(a,b,c);
@@ -1035,6 +1035,7 @@ double line_equation_distortion_extraction_improved_hough(
     for(int i=0; i<(int)image_primitive.get_lines().size(); i++)
     {
 			image_primitive_corrected.get_lines()[i].points_to_equation();
+      cout << "Nombre de points sur la ligne " << i << " dans le if2 corrected : " << image_primitive_corrected.get_lines()[i].get_points().size() << endl;
 			double a,b,c;
 			image_primitive_corrected.get_lines()[i].get_abc(a,b,c);
 			image_primitive.get_lines()[i].set_abc(a,b,c);

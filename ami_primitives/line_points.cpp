@@ -37,14 +37,14 @@ RETURN THE AVERAGE OF THE SQUARED DISTANCE OF THE POINTS TO THE LINE */
 /****************************************************************/
 AMI_DLL_CPP double line_points::points_to_equation()
 {
- int i,j,k;
- long double suu,suv,svv/*,h0,h1*/,um,vm,h,r[4][3],min,paso,norma;
+ int i, j, k;
+ long double suu, suv, svv/*,h0,h1*/, um, vm, h, r[4][3], min, paso, norma;
  long double cero=10e-100;
  int N=points.size();
- //cout << "N : " << N << endl;
- if(N<2)
+
+ if(N < 2)
  {
-   printf("Numero de puntos para el Calculo de la recta 2D menor que 2\n");
+   printf("Numero de puntos para el Calculo de la recta 2D menor que 2 ---- points_to_equation() LP\n");
    return(-1.);
  }
 
@@ -91,13 +91,13 @@ AMI_DLL_CPP double line_points::points_to_equation()
      rect.set_c((double) -vm);
      return(0);
    }
-   printf("No se pudo calcular la recta 2D\n");
+   printf("No se pudo calcular la recta 2D ---- points_to_equation() LP\n");
    return(-1);
  }
 
  r[2][1]=r[3][1]=r[0][0]=r[1][0]=1.;
  h=0.5*(suu-svv)/suv;
- if(h>0)
+ if(h > 0)
  {
    r[0][1]=-h-sqrt(1.+h*h);
    r[0][2]=-(um+r[0][1]*vm);

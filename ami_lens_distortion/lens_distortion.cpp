@@ -330,7 +330,7 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_2v(
    int k2,  /* COEFICIENT 2 OF THE POLYNOMIAL TO BE UPDATED*/
    double **pol) /* 4 DEGREE 2 VARIABLE POLYNOM TO MINIMIZE (INPUT-OUTPUT) */
 {
-  int i,j/*,k,l*/;
+  int i, j/*,k,l*/;
   double *A, *x2, *y2, *d1, *d2,/*x_m,y_m,*/x2_m, y2_m, s_xx, s_yy/*,s_max*/, xA_m;
   double xd1_m, yA_m, yd1_m, xd2_m, yd2_m;
   double paso, **pol1, **pol2, **p_xx, **p_xy, **p_yy;
@@ -831,10 +831,11 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update(
    int k,  /* COEFICIENT OF THE POLYNOMIAL TO BE UPDATED*/
    double *pol) /* 4 DEGREE POLYNOM TO MINIMIZE (INPUT-OUTPUT) */
 {
-  int i,j;
-  double *A,*x2,*y2,*d,x2_m,y2_m,s_xx,s_yy/*,x_m,y_m,s_max*/,xA_m,xd_m,yA_m,yd_m;
+  int i, j;
+  double *A, *x2, *y2, *d, x2_m, y2_m, s_xx, s_yy/*,x_m,y_m,s_max*/, xA_m, xd_m, yA_m, yd_m;
   double pol1[5],pol2[5],pol3[5];
-   if(Np<3) return(-1);
+   if(Np < 3)
+     return(-1);
   /* WE ALLOCATE MEMORY */
   A=(double*)malloc( sizeof(double)*Np );
   x2=(double*)malloc( sizeof(double)*Np );
@@ -842,11 +843,11 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update(
   d=(double*)malloc( sizeof(double)*Np );
 
   /* WE COMPUTE THE DISTANCE TO THE IMAGE CENTER */
-  for(i=0;i<Np;i++)
+  for(i=0; i<Np; i++)
     d[i]=sqrt( (x[i]-x0)*(x[i]-x0)+(y[i]-y0)*(y[i]-y0) );
 
   /* WE COMPUTE THE POINT TRANSFORMATION WITH THE CURRENT LENS DISTORTION MODEL */
-  for(i=0;i<Np;i++){
+  for(i=0; i<Np; i++){
     A[i]=ami_polynomial_evaluation(a,Na,d[i]);
     x2[i]=x0+(x[i]-x0)*A[i];
     y2[i]=y0+(y[i]-y0)*A[i];
@@ -854,13 +855,30 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update(
 
   /* WE COMPUTE THE DISTANCE POWER k (THE COEFICIENT OF THE LENS DISTORTION MODEL
     TO BE UPDATED */
-  for(i=0;i<Np;i++)  d[i]=pow(d[i],(double) k);
+  for(i=0; i<Np; i++)
+    d[i]=pow(d[i],(double) k);
 
   /* WE COMPUTE THE VARIANCE OF THE TRANSFORMED POINTS */
-  x2_m=0; for(i=0;i<Np;i++) x2_m+=x2[i];  x2_m/=Np;
-  s_xx=0; for(i=0;i<Np;i++) s_xx+=(x2[i]-x2_m)*(x2[i]-x2_m); s_xx/=Np;
-  y2_m=0; for(i=0;i<Np;i++) y2_m+=y2[i];  y2_m/=Np;
-  s_yy=0; for(i=0;i<Np;i++) s_yy+=(y2[i]-y2_m)*(y2[i]-y2_m); s_yy/=Np;
+  x2_m=0; 
+  for(i=0; i<Np; i++) 
+    x2_m += x2[i];
+  
+  x2_m/=Np;
+  s_xx=0; 
+  for(i=0;i<Np;i++) 
+    s_xx += (x2[i]-x2_m)*(x2[i]-x2_m); 
+  
+  s_xx/=Np;
+  y2_m=0; 
+  for(i=0; i<Np; i++)
+    y2_m+=y2[i];
+  
+  y2_m/=Np;
+  s_yy=0; 
+  for(i=0; i<Np; i++) 
+    s_yy += (y2[i]-y2_m)*(y2[i]-y2_m); 
+  
+  s_yy/=Np;
 //  s_max=s_xx>s_yy?s_xx:s_yy;
 
   /* WE COMPUTE SOME AVERAGES WE NEED */
@@ -870,8 +888,10 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update(
   yd_m=0; for(i=0;i<Np;i++) yd_m+=(y[i]-y0)*d[i]; yd_m/=Np;
 
   /* WE COMPUTE THE POLYNOMIAL TO MINIMIZE */
-  for(i=0;i<5;i++) pol1[i]=pol2[i]=pol3[i]=0;
-  for(i=0;i<Np;i++){
+  for(i=0; i<5; i++)
+    pol1[i]=pol2[i]=pol3[i]=0;
+  for(i=0; i<Np; i++)
+  {
     pol1[0]+=((x[i]-x0)*A[i]-xA_m)*((x[i]-x0)*A[i]-xA_m);
     pol1[1]+=2.*((x[i]-x0)*A[i]-xA_m)*((x[i]-x0)*d[i]-xd_m);
     pol1[2]+=((x[i]-x0)*d[i]-xd_m)*((x[i]-x0)*d[i]-xd_m);
@@ -883,13 +903,18 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update(
              ((y[i]-y0)*d[i]-yd_m)*((x[i]-x0)*A[i]-xA_m);
     pol3[2]+=((y[i]-y0)*d[i]-yd_m)*((x[i]-x0)*d[i]-xd_m);
   }
-  for(i=0;i<3;i++){
-    for(j=0;j<3;j++){
-      pol[i+j]+=(pol1[i]*pol2[j]-pol3[i]*pol3[j])/1. /*s_max*/;
+  for(i=0; i<3; i++)
+  {
+    for(j=0; j<3; j++)
+    {
+      pol[i+j] += (pol1[i]*pol2[j]-pol3[i]*pol3[j])/1. /*s_max*/;
     }
   }
   /* WE FREE MEMORY */
-  free(A); free(x2); free(y2); free(d);
+  free(A);
+  free(x2);
+  free(y2);
+  free(d);
 
   return(0);
 }
@@ -910,28 +935,35 @@ AMI_DLL_CPP int ami_lens_distortion_model_update(
    int k,  /* COEFICIENT OF THE POLYNOMIAL TO BE UPDATED (INPUT)*/
    double *pol) /* 4 DEGREE POLYNOM TO MINIMIZE (INPUT) */
 {
-  int j,i,M;
-  double *x,*b,p[3];
-  x=(double*)malloc( sizeof(double)*3 );
-  b=(double*)malloc( sizeof(double)*4 );
-  b[0]=pol[1]; b[1]=2*pol[2]; b[2]=3.*pol[3]; b[3]=4.*pol[4];
-  M=ami_RootCubicPolynomial(b,3,x);
-  for(i=0;i<M;i++) p[i]=ami_polynomial_evaluation(pol,4,x[i]);
-  j=0;
+  int j, i, M;
+  double *x, *b, p[3];
+  x = (double*)malloc( sizeof(double)*3 );
+  b = (double*)malloc( sizeof(double)*4 );
+  b[0]=pol[1];
+  b[1]=2*pol[2];
+  b[2]=3.*pol[3];
+  b[3]=4.*pol[4];
+  M = ami_RootCubicPolynomial(b,3,x);
+  for(i=0; i<M; i++)
+    p[i]=ami_polynomial_evaluation(pol,4,x[i]);
+  
+  j = 0;
   //printf("M=%d\n",M);
-  if(M==3){
+  if(M == 3)
+  {
     if(p[j]>p[1] /*&& fabs(x[1])<1. */) j=1;
     if(p[j]>p[2] /*&& fabs(x[2])<1.*/ ) j=2;
   }
 
   //if(fabs(x[j])<1.) a[k]+=x[j];
 
-  a[k]+=x[j];
+  a[k] += x[j];
 
   //printf("%1.0e ",x[j]);
   //if(k==1 && a[1]<0) a[1]=0;
   //if(k==Na && a[k]<0) a[k]=0;
-  free(x); free(b);
+  free(x);
+  free(b);
   return(0);
 }
 
@@ -956,26 +988,46 @@ AMI_DLL_CPP double ami_LensDistortionVarianceError(
   int Na) /* Degree of Polynomial model (INPUT)*/
 {
 int i/*,j*/;
-  double A,*x2,*y2,d,x2_m,y2_m,s_xx,s_yy,s_max,s_xy/*,y_m,x_m,xA_m,xd_m,yA_m,yd_m*/;
-   if(Np<3) return((double) 0.);
+  double A,*x2, *y2, d, x2_m, y2_m, s_xx, s_yy, s_max, s_xy/*,y_m,x_m,xA_m,xd_m,yA_m,yd_m*/;
+   if(Np < 3)
+     return((double) 0.);
+  
   /* WE ALLOCATE MEMORY */
   x2=(double*)malloc( sizeof(double)*Np );
   y2=(double*)malloc( sizeof(double)*Np );
 
   /* WE COMPUTE THE POINT TRANSFORMATION USING THE LENS DISTORTION MODEL*/
-  for(i=0;i<Np;i++){
+  for(i=0; i<Np; i++)
+  {
     d=sqrt( (x[i]-x0)*(x[i]-x0)+(y[i]-y0)*(y[i]-y0) );
     A=ami_polynomial_evaluation(a,Na,d);
     x2[i]=x0+(x[i]-x0)*A;
     y2[i]=y0+(y[i]-y0)*A;
   }
   /* WE COMPUTE THE VARIANCE OF THE TRANSFORMED POINTS */
-  x2_m=0; for(i=0;i<Np;i++) x2_m+=x2[i];  x2_m/=Np;
-  s_xx=0; for(i=0;i<Np;i++) s_xx+=(x2[i]-x2_m)*(x2[i]-x2_m); s_xx/=Np;
-  y2_m=0; for(i=0;i<Np;i++) y2_m+=y2[i];  y2_m/=Np;
-  s_yy=0; for(i=0;i<Np;i++) s_yy+=(y2[i]-y2_m)*(y2[i]-y2_m); s_yy/=Np;
-  s_xy=0; for(i=0;i<Np;i++) s_xy+=(y2[i]-y2_m)*(x2[i]-x2_m); s_xy/=Np;
-  s_max=s_xx>s_yy?s_xx:s_yy;
+  x2_m=0; 
+  for(i=0; i<Np; i++)
+    x2_m += x2[i]; 
+  x2_m/=Np;
+  
+  s_xx=0; 
+  for(i=0; i<Np; i++) 
+    s_xx += (x2[i]-x2_m)*(x2[i]-x2_m); 
+  s_xx/=Np;
+  y2_m=0; 
+  for(i=0; i<Np; i++) 
+    y2_m+=y2[i];  
+  y2_m/=Np;
+  
+  s_yy=0;
+  for(i=0; i<Np; i++)
+    s_yy+=(y2[i]-y2_m)*(y2[i]-y2_m);
+  s_yy/=Np;
+  s_xy=0; 
+  for(i=0;i<Np;i++) 
+    s_xy+=(y2[i]-y2_m)*(x2[i]-x2_m); 
+  s_xy/=Np;
+  s_max=s_xx>s_yy ? s_xx : s_yy;
 
   /* WE FREE MEMORY */
   free(x2); free(y2);
@@ -1008,26 +1060,48 @@ AMI_DLL_CPP double ami_LensDistortionEnergyError(
 int i/*,j*/;
   double A,*x2,*y2,d,x2_m,y2_m,s_xx,s_yy,s_xy/*,y_m,s_max,x_m,xA_m,xd_m,yA_m,yd_m*/;
   /* WE ALLOCATE MEMORY */
-   if(Np<3) return((double) 0.);
+   if(Np < 3)
+     return((double) 0.);
   x2=(double*)malloc( sizeof(double)*Np );
   y2=(double*)malloc( sizeof(double)*Np );
 
   /* WE COMPUTE THE POINT TRANSFORMATION USING THE LENS DISTORTION MODEL*/
-  for(i=0;i<Np;i++){
+  for(i=0; i<Np; i++)
+  {
     d=sqrt( (x[i]-x0)*(x[i]-x0)+(y[i]-y0)*(y[i]-y0) );
     A=ami_polynomial_evaluation(a,Na,d);
     x2[i]=x0+(x[i]-x0)*A;
     y2[i]=y0+(y[i]-y0)*A;
   }
   /* WE COMPUTE THE ENERGY OF THE TRANSFORMED POINTS */
-  x2_m=0; for(i=0;i<Np;i++) x2_m+=x2[i];  x2_m/=Np;
-  s_xx=0; for(i=0;i<Np;i++) s_xx+=(x2[i]-x2_m)*(x2[i]-x2_m); s_xx/=Np;
-  y2_m=0; for(i=0;i<Np;i++) y2_m+=y2[i];  y2_m/=Np;
-  s_yy=0; for(i=0;i<Np;i++) s_yy+=(y2[i]-y2_m)*(y2[i]-y2_m); s_yy/=Np;
-  s_xy=0; for(i=0;i<Np;i++) s_xy+=(y2[i]-y2_m)*(x2[i]-x2_m); s_xy/=Np;
+  x2_m=0;
+  for(i=0; i<Np; i++)
+    x2_m+=x2[i];
+  x2_m/=Np;
+  
+  s_xx=0;
+  for(i=0; i<Np; i++) 
+    s_xx+=(x2[i]-x2_m)*(x2[i]-x2_m); 
+  s_xx/=Np;
+  
+  y2_m=0;
+  for(i=0; i<Np; i++)
+    y2_m += y2[i];
+  y2_m/=Np;
+  
+  s_yy=0; 
+  for(i=0; i<Np; i++)
+    s_yy += (y2[i]-y2_m)*(y2[i]-y2_m);
+  s_yy/=Np;
+  
+  s_xy=0; 
+  for(i=0; i<Np; i++)
+    s_xy+=(y2[i]-y2_m)*(x2[i]-x2_m);
+  s_xy/=Np;
 
   /* WE FREE MEMORY */
-  free(x2); free(y2);
+  free(x2); 
+  free(y2);
 //printf("Distortion Error =%e\n",(s_xx*s_yy-s_xy*s_xy));
   return((s_xx*s_yy-s_xy*s_xy));
 
@@ -1054,58 +1128,94 @@ AMI_DLL_CPP double ami_points_to_line_equation(
   int N,  // INPUT NUMBER OF POINTS
   double line[3]) // OUTPUT LINE EQUATION
 {
-  int i,j,k;
-  double suu,suv,svv/*,h0,h1*/,um,vm,h,r[4][3],min,paso,norma;
+  int i, j, k;
+  double suu, suv, svv/*,h0,h1*/, um, vm, h, r[4][3], min, paso, norma;
   double cero=1e-20;
-  double *x2,*y2;
+  double *x2, *y2;
   double error=0;
-  if(N<2){
+  if(N < 2)
+  {
     printf("Numero de puntos para el Calculo de la recta 2D menor que 2\n");
     return((double) -1.);
   }
-  if(Na>0){
+  if(Na > 0)
+  {
     x2=(double*)malloc(sizeof(double)*N);
     y2=(double*)malloc(sizeof(double)*N);
   }
-  else{
+  else
+  {
     x2=x;
     y2=y;
   }
-  suu=0; suv=0; svv=0; um=0; vm=0;
-  for(i=0;i<N;i++){
+  suu=0; 
+  suv=0; 
+  svv=0; 
+  um=0; 
+  vm=0;
+  
+  for(i=0; i<N; i++)
+  {
   ami_lens_distortion_model_evaluation(a,Na,xc,yc,x[i],y[i],&(x2[i]),&(y2[i]));
     um+=x2[i];
     vm+=y2[i];
   }
-  um/=N; vm/=N;
-  for(i=0;i<N;i++){
+  um/=N;
+  vm/=N;
+  
+  for(i=0; i<N; i++)
+  {
     suu+=(x2[i]-um)*(x2[i]-um);
     svv+=(y2[i]-vm)*(y2[i]-vm);
     suv+=(x2[i]-um)*(y2[i]-vm);
   }
-  suu/=N; svv/=N; suv/=N;
+  suu/=N; 
+  svv/=N; 
+  suv/=N;
   /*  printf("um=%f,vm=%f,suu=%f,svv=%f,suv=%f",um,vm,suu,svv,suv); */
-  if(fabs(suv)<= cero){
-    if(suu<svv && svv>cero){
-      line[0]=1; line[1]=0; line[2]=-um;
-      for(i=0;i<N;i++) error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
-      if(Na>0){free(x2); free(y2);}
+  if(fabs(suv)<= cero)
+  {
+    if(suu<svv && svv>cero)
+    {
+      line[0]=1; 
+      line[1]=0; 
+      line[2]=-um;
+      for(i=0; i<N; i++)
+        error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
+      if(Na > 0)
+      {
+        free(x2);
+        free(y2);
+      }
       return(error/N);
     }
-    if(svv<suu && suu>cero){
-      line[0]=0; line[1]=1; line[2]=-vm;
-      for(i=0;i<N;i++) error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
-      if(Na>0){free(x2); free(y2);}
+    if(svv<suu && suu>cero)
+    {
+      line[0]=0;
+      line[1]=1;
+      line[2]=-vm;
+      for(i=0; i<N; i++)
+        error += fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
+      if(Na > 0)
+      {
+        free(x2);
+        free(y2);
+      }
       return(error/N);
     }
     printf("No se pudo calcular la recta 2D\n");
-    if(Na>0){free(x2); free(y2);}
+    if(Na > 0)
+    {
+      free(x2);
+      free(y2);
+    }
     return((double)-1.);
   }
 
   r[2][1]=r[3][1]=r[0][0]=r[1][0]=1.;
   h=0.5*(suu-svv)/suv;
-  if(h>0){
+  if(h > 0)
+  {
     r[0][1]=-h-sqrt(1.+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -1115,7 +1225,8 @@ AMI_DLL_CPP double ami_points_to_line_equation(
     r[3][0]=-1./r[2][0];
     r[3][2]=-(r[3][0]*um+vm);
   }
-  else{
+  else
+  {
     r[0][1]=-h+sqrt(1+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -1126,32 +1237,44 @@ AMI_DLL_CPP double ami_points_to_line_equation(
     r[3][2]=-(r[3][0]*um+vm);
   }
 
-  for(j=0;j<4;j++){
+  for(j=0; j<4; j++)
+  {
     norma=sqrt(r[j][0]*r[j][0]+r[j][1]*r[j][1]);
-    for(i=0;i<3;i++)
+    for(i=0; i<3; i++)
       r[j][i]/=norma;
   }
 
   min=0.; k=0;
-  for(i=0;i<N;i++){
+  for(i=0; i<N; i++)
+  {
    paso=r[0][0]*x2[i]+r[0][1]*y2[i]+r[0][2];
    min+=paso*paso;
   }
-  for(j=1;j<4;j++){
+  for(j=1; j<4; j++)
+  {
     h=0;
-    for(i=0;i<N;i++){
+    for(i=0; i<N; i++)
+    {
       paso=r[j][0]*x2[i]+r[j][1]*y2[i]+r[j][2];
       h+=paso*paso;
     }
-    if(h<min){
+    if(h < min)
+    {
       k=j;
       min=h;
     }
   }
 
-  line[0]=r[k][0]; line[1]=r[k][1]; line[2]=r[k][2];
-  for(i=0;i<N;i++) error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
-  if(Na>0){free(x2); free(y2);}
+  line[0]=r[k][0];
+  line[1]=r[k][1];
+  line[2]=r[k][2];
+  for(i=0; i<N; i++)
+    error += fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
+  if(Na > 0)
+  {
+    free(x2);
+    free(y2);
+  }
   return(error/N);
 
 }
@@ -1182,60 +1305,95 @@ AMI_DLL_CPP double ami_points_to_line_equation_outlier_elimination(
                                     //LINE BE BIGGER THAN THE AVERAGE DISTANCE +
                                     // + outlier_elimination_factor*STANDARD DEVIATION
 {
-  int i,j,k;
-  double suu,suv,svv/*,h0,h1*/,um,vm,h,r[4][3],min,paso,norma;
+  int i, j, k;
+  double suu, suv, svv/*,h0,h1*/, um, vm, h, r[4][3], min, paso, norma;
   double cero=1e-20;
-  double *x2,*y2;
+  double *x2, *y2;
   double error=0;
-  int N=*Np;
-  if(N<2){
+  int N = *Np;
+  if(N < 2)
+  {
     printf("Numero de puntos para el Calculo de la recta 2D menor que 2\n");
     return((double) -1.);
   }
 
-   if(Na>0){
+   if(Na > 0)
+   {
     x2=(double*)malloc(sizeof(double)*N);
     y2=(double*)malloc(sizeof(double)*N);
   }
-  else{
+  else
+  {
     x2=x;
     y2=y;
   }
-  suu=0; suv=0; svv=0; um=0; vm=0;
-  for(i=0;i<N;i++){
+  suu=0;
+  suv=0;
+  svv=0;
+  um=0;
+  vm=0;
+  
+  for(i=0; i<N; i++)
+  {
   ami_lens_distortion_model_evaluation(a,Na,xc,yc,x[i],y[i],&(x2[i]),&(y2[i]));
     um+=x2[i];
     vm+=y2[i];
   }
-  um/=N; vm/=N;
-  for(i=0;i<N;i++){
+  um/=N;
+  vm/=N;
+  for(i=0; i<N; i++)
+  {
     suu+=(x2[i]-um)*(x2[i]-um);
     svv+=(y2[i]-vm)*(y2[i]-vm);
     suv+=(x2[i]-um)*(y2[i]-vm);
   }
-  suu/=N; svv/=N; suv/=N;
+  suu/=N;
+  svv/=N;
+  suv/=N;
   /*  printf("um=%f,vm=%f,suu=%f,svv=%f,suv=%f",um,vm,suu,svv,suv); */
-  if(fabs(suv)<= cero){
-    if(suu<svv && svv>cero){
-      line[0]=1; line[1]=0; line[2]=-um;
-      for(i=0;i<N;i++) error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
-      if(Na>0){free(x2); free(y2);}
+  if(fabs(suv)<= cero)
+  {
+    if(suu<svv && svv>cero)
+    {
+      line[0]=1; 
+      line[1]=0; 
+      line[2]=-um;
+      for(i=0; i<N; i++)
+        error += fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
+      if(Na > 0)
+      {
+        free(x2);
+        free(y2);
+      }
       return(error/N);
     }
-    if(svv<suu && suu>cero){
-      line[0]=0; line[1]=1; line[2]=-vm;
-      for(i=0;i<N;i++) error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
-      if(Na>0){free(x2); free(y2);}
+    if(svv<suu && suu>cero)
+    {
+      line[0]=0;
+      line[1]=1;
+      line[2]=-vm;
+      for(i=0; i<N; i++)
+        error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
+      if(Na > 0)
+      {
+        free(x2);
+      free(y2);
+      }
       return(error/N);
     }
     printf("No se pudo calcular la recta 2D\n");
-    if(Na>0){free(x2); free(y2);}
+    if(Na > 0)
+    {
+      free(x2);
+      free(y2);
+    }
     return((double)-1.);
   }
 
   r[2][1]=r[3][1]=r[0][0]=r[1][0]=1.;
   h=0.5*(suu-svv)/suv;
-  if(h>0){
+  if(h > 0)
+  {
     r[0][1]=-h-sqrt(1.+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -1245,7 +1403,8 @@ AMI_DLL_CPP double ami_points_to_line_equation_outlier_elimination(
     r[3][0]=-1./r[2][0];
     r[3][2]=-(r[3][0]*um+vm);
   }
-  else{
+  else
+  {
     r[0][1]=-h+sqrt(1+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -1256,47 +1415,67 @@ AMI_DLL_CPP double ami_points_to_line_equation_outlier_elimination(
     r[3][2]=-(r[3][0]*um+vm);
   }
 
-  for(j=0;j<4;j++){
+  for(j=0; j<4; j++)
+  {
     norma=sqrt(r[j][0]*r[j][0]+r[j][1]*r[j][1]);
     for(i=0;i<3;i++)
       r[j][i]/=norma;
   }
 
   min=0.; k=0;
-  for(i=0;i<N;i++){
+  for(i=0; i<N; i++)
+  {
    paso=r[0][0]*x2[i]+r[0][1]*y2[i]+r[0][2];
    min+=paso*paso;
   }
-  for(j=1;j<4;j++){
+  for(j=1; j<4; j++)
+  {
     h=0;
-    for(i=0;i<N;i++){
+    for(i=0; i<N; i++)
+    {
       paso=r[j][0]*x2[i]+r[j][1]*y2[i]+r[j][2];
       h+=paso*paso;
     }
-    if(h<min){
+    if(h < min)
+    {
       k=j;
       min=h;
     }
   }
 
-  line[0]=r[k][0]; line[1]=r[k][1]; line[2]=r[k][2];
+  line[0]=r[k][0]; 
+  line[1]=r[k][1]; 
+  line[2]=r[k][2];
   // OUTLIER ELIMINATION
-  for(i=0;i<N;i++) error+=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
+  for(i=0; i<N; i++)
+    error += fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
   double average=error/N;
   double standard_deviation=0;
-  for(i=0;i<N;i++){
+  for(i=0; i<N; i++)
+  {
     paso=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2])-average;
-    standard_deviation+=paso*paso;
+    standard_deviation += paso*paso;
   }
   standard_deviation=sqrt(standard_deviation/N);
-  for(i=0;i<N;i++){
+  for(i=0;i<N;i++)
+  {
     paso=fabs(line[0]*x2[i]+line[1]*y2[i]+line[2]);
-    if(paso>(average+standard_deviation*outlier_elimination_factor)){
-      x[i]=x[N-1];  y[i]=y[N-1];  x2[i]=x2[N-1];  y2[i]=y2[N-1];  i--; N--;
+    if(paso > (average+standard_deviation*outlier_elimination_factor))
+    {
+      x[i]=x[N-1];
+      y[i]=y[N-1];
+      x2[i]=x2[N-1];
+      y2[i]=y2[N-1];
+      i--;
+      N--;
     }
   }
   *Np=N;
-  if(Na>0){free(x2); free(y2);}
+  if(Na > 0)
+  {
+    free(x2);
+  free(y2);
+  }
   return(ami_points_to_line_equation(a,Na,xc,yc,x,y,N,line));
 
 }
@@ -1342,32 +1521,40 @@ AMI_DLL_CPP double ami_distortion_model_estimation_2p(
   // WE COMPUTE THE DISTORSION ERROR IN THE ORIGINAL POINTS
   double Emin=0;
   int cont2=0;
-  for(m=0;m<Nl;m++){
+  for(m=0; m<Nl; m++)
+  {
     //Emin+=sqrt(ami_LensDistortionVarianceError(x[m],y[m],Np[m],xc,yc,(*a),*Na));
-    Emin+=ami_LensDistortionEnergyError(x[m],y[m],Np[m],xc,yc,(*a),*Na);
-    cont2+=Np[m];
+    Emin += ami_LensDistortionEnergyError(x[m],y[m],Np[m],xc,yc,(*a),*Na);
+    cont2 += Np[m];
   }
   /* NORMALIZAMOS LAS COORDENADAS DE LOS PUNTOS */
   factor_n=0.; cont=0;
-  for(m=0;m<Nl;m++){
+  for(m=0; m<Nl; m++)
+  {
     xx[m]=(double*)malloc(sizeof(double)*Np[m]);
     yy[m]=(double*)malloc(sizeof(double)*Np[m]);
     for(i=0;i<Np[m];i++){
       xx[m][i]=x[m][i]-xc;
       yy[m][i]=y[m][i]-yc;
       cont++;
-      factor_n+=xx[m][i]*xx[m][i]+yy[m][i]*yy[m][i];
+      factor_n += xx[m][i] * xx[m][i]+yy[m][i] * yy[m][i];
      }
   }
 
   factor_n=sqrt(factor_n/cont);
-  for(m=0;m<Nl;m++) for(i=0;i<Np[m];i++){ xx[m][i]/=factor_n; yy[m][i]/=factor_n; }
+  for(m=0; m<Nl; m++)
+    for(i=0; i<Np[m]; i++)
+    { 
+      xx[m][i]/=factor_n;
+      yy[m][i]/=factor_n; 
+    }
 
   // WE COMPUTE THE DISTORTION ERROR FOR THE NORMALIZED POINT COORDINATES
   Emin=0;
-  for(m=0;m<Nl;m++){
+  for(m=0; m<Nl; m++)
+  {
     //Emin+=sqrt(ami_LensDistortionVarianceError(x[m],y[m],Np[m],xc,yc,(*a),*Na));
-    Emin+=ami_LensDistortionEnergyError(xx[m],yy[m],Np[m],0.,0.,(*a),*Na);
+    Emin += ami_LensDistortionEnergyError(xx[m],yy[m],Np[m],0.,0.,(*a),*Na);
   }
 
   /* WE RESET THE POLYNOMIAL LENS DISTORTION MODEL */
@@ -1380,25 +1567,32 @@ AMI_DLL_CPP double ami_distortion_model_estimation_2p(
 
   // WE COMPUTE THE DISTORTION ERROR FOR THE NORMALIZED POINT COORDINATES
   Emin=0;
-  for(m=0;m<Nl;m++){
+  for(m=0; m<Nl; m++)
+  {
     //Emin+=sqrt(ami_LensDistortionVarianceError(x[m],y[m],Np[m],xc,yc,(*a),*Na));
-    Emin+=ami_LensDistortionEnergyError(xx[m],yy[m],Np[m],0.,0.,(*a),*Na);
+    Emin += ami_LensDistortionEnergyError(xx[m],yy[m],Np[m],0.,0.,(*a),*Na);
   }
   /* WE REMOVE POINT NORMALIZATION FROM THE DISTORSION PARAMETERS */
   double paso=1.;
-  for(i=0;i<=*Na;i++){
+  for(i=0; i<=*Na; i++)
+  {
     (*a)[i]=(*a)[i]*paso;
     paso/=factor_n;
   }
   // ami_printf1d("a",(*a),*Na+1);
   // WE COMPUTE THE DISTORSION ERROR IN THE ORIGINAL POINTS
   Emin=0;
-  for(m=0;m<Nl;m++){
+  for(m=0; m<Nl; m++)
+  {
     //Emin+=sqrt(ami_LensDistortionVarianceError(x[m],y[m],Np[m],xc,yc,(*a),*Na));
-    Emin+=ami_LensDistortionEnergyError(x[m],y[m],Np[m],xc,yc,(*a),*Na);
+    Emin += ami_LensDistortionEnergyError(x[m],y[m],Np[m],xc,yc,(*a),*Na);
   }
   // WE FREE THE MEMORY
-  for(m=0;m<Nl;m++){free(xx[m]); free(yy[m]);}
+  for(m=0; m<Nl; m++)
+  {
+    free(xx[m]);
+    free(yy[m]);
+  }
   free(xx);
   free(yy);
   return(Emin/Nl);
@@ -1426,8 +1620,8 @@ AMI_DLL_CPP void ami_lens_distortion_model_evaluation(
   double *x_output,double *y_output  // OUTPUT UNDISTORTED POINT
 )
 {
-  double norm=sqrt((x_input-xc)*(x_input-xc)+(y_input-yc)*(y_input-yc));
-  double A=ami_polynomial_evaluation(a,Na,norm);
+  double norm = sqrt((x_input-xc)*(x_input-xc)+(y_input-yc)*(y_input-yc));
+  double A = ami_polynomial_evaluation(a,Na,norm);
   *x_output=xc+(x_input-xc)*A;
   *y_output=yc+(y_input-yc)*A;
 }
@@ -1445,66 +1639,71 @@ AMI_DLL_CPP double ami_inverse_lens_distortion_newton_raphson(
   int Na) /* DEGREE OF THE LENS DISTORTION MODEL POLYNOM */
 {
   int i;
-  double paso,d,*b,*b2,root;
-  if(a[Na]==0.) return(-1);
+  double paso, d, *b, *b2, root;
+  if(a[Na] == 0.) 
+    return(-1);
   /* WE ALLOCATE MEMORY */
   b=(double*)malloc( sizeof(double)*(Na+2) );
   b2=(double*)malloc( sizeof(double)*(Na+2) );
   d=sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0));
-  b[0]=-1; b[1]=a[0];//1.;
+  b[0]=-1;
+  b[1]=a[0];//1.;
   paso=d;
-  for(i=2;i<(Na+2);i++){
+  for(i=2; i<(Na+2); i++)
+  {
     b[i]=a[i-1]*paso;
     paso*=d;
   }
-  for(i=0;i<(Na+2);i++) b2[i]=b[Na+1-i];
+  for(i=0; i<(Na+2); i++)
+    b2[i]=b[Na+1-i];
 
   // WE IMPROVE SOLUTION USING NEWTON RAPHSON
   double norm2;
   //double xn=*xt,yn=*yt,xp,yp,xn2,yn2,xn3,yn3,error,tol=1e-8;
-  double xn=x,yn=y,xp,yp,xn2=0.,yn2=0.,xn3,yn3,error,tol=1e-8;
-  ami_lens_distortion_model_evaluation(a,Na,x0,y0,xn,yn,&xp,&yp);
-  //printf("xp=%lf yp=%lf\n",xp,yp);
-  //printf("   xn=%lf yn=%lf\n",xn,yn);
+  double xn=x, yn=y, xp, yp, xn2=0., yn2=0., xn3, yn3, error, tol=1e-8;
+  ami_lens_distortion_model_evaluation(a, Na, x0, y0, xn, yn, &xp, &yp);
   norm2=(xp-x)*(xp-x)+(yp-y)*(yp-y);
   error=tol+1;
   int iter=0;
   root=1;
   double lambda=1;
-  while(error>tol && ++iter<100){
+  while(error>tol && ++iter<100)
+  {
     xn2=x0+(xn-x0)*(root+1e-6);
     yn2=y0+(yn-y0)*(root+1e-6);
     xn3=x0+(xn-x0)*(root-1e-6);
     yn3=y0+(yn-y0)*(root-1e-6);
     ami_lens_distortion_model_evaluation(a,Na,x0,y0,xn2,yn2,&xp,&yp);
-    //printf("lambda=%e iter=%d\n",lambda,iter);
     double norm3=(xp-x)*(xp-x)+(yp-y)*(yp-y);
     ami_lens_distortion_model_evaluation(a,Na,x0,y0,xn3,yn3,&xp,&yp);
-    //printf("lambda=%e iter=%d\n",lambda,iter);
     double norm4=(xp-x)*(xp-x)+(yp-y)*(yp-y);
     double derivative=(norm3-norm4)/2e-6;
     double derivative2=(norm3+norm4-2.*norm2)/1e-12;
-    //printf("norm2=%e,norm3=%e,norm4=%e, derivative=%e, derivative2=%e\n",norm2,norm3,norm4,derivative,derivative2);
-    if(derivative2==0) break;
+    if(derivative2 == 0)
+      break;
     double root2=root-lambda*derivative/derivative2;
     error=fabs(root2-root);
     xn2=x0+(xn-x0)*root2;
     yn2=y0+(yn-y0)*root2;
     ami_lens_distortion_model_evaluation(a,Na,x0,y0,xn2,yn2,&xp,&yp);
     norm3=(xp-x)*(xp-x)+(yp-y)*(yp-y);
-    if(norm3<norm2){
+    if(norm3 < norm2)
+    {
       root=root2;
       norm2=norm3;
-      if(lambda<1.) lambda*=2.;
+      if(lambda < 1.)
+        lambda*=2.;
     }
-    else {
+    else 
+    {
       lambda/=2.;
     }
   }
-  //printf("iter=%d, root=%e, norm2=%e\n",iter,root,norm2);
-  *xt=xn2; *yt=yn2;
+  *xt=xn2;
+  *yt=yn2;
 
-  free(b); free(b2);
+  free(b); 
+  free(b2);
   //free(rx); free(ry);  OJO comentado Pedro, a veces da segmentation fault
   return(norm2);
 }
@@ -1529,8 +1728,8 @@ AMI_DLL_CPP int ami_inverse_lens_distortion(
   double *a, /* LENS DISTORTION MODEL POLYNOM */
   int Na) /* DEGREE OF THE LENS DISTORTION MODEL POLYNOM */
 {
-  int i,Nr;
-  double paso,d,*b,*b2,*rx,*ry,root;
+  int i, Nr;
+  double paso, d, *b, *b2, *rx, *ry, root;
   if(a[Na]==0.) return(-1);
   /* WE ALLOCATE MEMORY */
   b=(double*)malloc( sizeof(double)*(Na+2) );
@@ -1539,49 +1738,61 @@ AMI_DLL_CPP int ami_inverse_lens_distortion(
   ry=(double*)malloc( sizeof(double)*(Na+2) );
   /* WE DEFINE THE POLYNOM WE NEED TO COMPUTE ROOTS */
   d=sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0));
-  b[0]=-1; b[1]=a[0];
+  b[0]=-1;
+  b[1]=a[0];
   paso=d;
-  for(i=2;i<(Na+2);i++){
+  for(i=2; i<(Na+2); i++)
+  {
     b[i]=a[i-1]*paso;
     paso*=d;
   }
 
-  if(Na==2){
+  if(Na == 2)
+  {
     Nr=ami_RootCubicPolynomial(b,3,rx);
-    for(i=0;i<Na;i++) ry[i]=0;
+    for(i=0; i<Na; i++)
+      ry[i]=0;
   }
-  else{
-    for(i=0;i<(Na+2);i++) b2[i]=b[Na+1-i];
+  else
+  {
+    for(i=0; i<(Na+2); i++)
+      b2[i]=b[Na+1-i];
     //for(i=0;i<(Na+2);i++) printf("b2[%d]=%1.20e\n",i,b2[i]); system("pause");
     Nr=ami_polynomial_root(b2,Na+1,rx,ry);
   }
   /* WE SELECT THE REAL ROOT NEAR TO 1 */
   root=10e5;
-  for(i=0;i<Nr;i++){
+  for(i=0; i<Nr; i++)
+  {
     //printf("rx[%d]=%e ry[%d]=%e\n",i,rx[i],i,ry[i]);
-    if(fabs(ry[i])<0.00000000001 && fabs(root-1)>fabs(rx[i]-1)) root=rx[i];
+    if(fabs(ry[i])<0.00000000001 && fabs(root-1)>fabs(rx[i]-1))
+      root=rx[i];
   }
-  if(Nr==0){
+  if(Nr == 0)
+  {
     root=1.;
   }
 
   /* WE TRANSFORM THE POINT COORDINATES */
   *xt=x0+(x-x0)*root;
   *yt=y0+(y-y0)*root;
-  //printf("*xt=%lf,*yt=%lf\n",*xt,*yt);
 
-  double x2,y2;
+  double x2, y2;
   double error=ami_inverse_lens_distortion_newton_raphson(x,y,x0,y0,&x2,&y2,a,Na);
 
-  //printf("x2=%e y2=%e xt=%e yt=%e\n",x2,y2,*xt,*yt);
-
-  if(error<2.){
-    if( ((x-x2)*(x-x2)+(y-y2)*(y-y2)) < ((x-(*xt))*(x-(*xt))+(y-(*yt))*(y-(*yt))) ){
+  if(error < 2.)
+  {
+    if( ((x-x2)*(x-x2)+(y-y2)*(y-y2)) < ((x-(*xt))*(x-(*xt))+(y-(*yt))*(y-(*yt))) )
+    {
       *xt=x2; *yt=y2;
     }
   }
 
-  free(b); free(rx); free(ry); free(b2);
+  free(b); 
+  free(rx); 
+  free(ry); 
+  free(b2);
+  
   return(0);
 }
 
@@ -1614,8 +1825,10 @@ AMI_DLL_CPP int ami_inverse_lens_distortion_fast(
   double x2,y2;
   double error=ami_inverse_lens_distortion_newton_raphson(x,y,x0,y0,&x2,&y2,a,Na);
 
-  if(error<2.){
-    if( ((x-x2)*(x-x2)+(y-y2)*(y-y2)) < ((x-(*xt))*(x-(*xt))+(y-(*yt))*(y-(*yt))) ){
+  if(error < 2.)
+  {
+    if( ((x-x2)*(x-x2)+(y-y2)*(y-y2)) < ((x-(*xt))*(x-(*xt))+(y-(*yt))*(y-(*yt))) )
+    {
       *xt=x2; *yt=y2;
     }
   }
@@ -1639,8 +1852,9 @@ AMI_DLL_CPP int ami_inverse_lens_distortion_old(
   int Na) /* DEGREE OF THE LENS DISTORTION MODEL POLYNOM */
 {
   int i,Nr;
-  double paso,d,*b,*b2,*rx,*ry,root;
-  if(a[Na]==0.) return(-1);
+  double paso, d, *b, *b2, *rx, *ry, root;
+  if(a[Na]==0.)
+    return(-1);
   /* WE ALLOCATE MEMORY */
   b=(double*)malloc( sizeof(double)*(Na+2) );
   b2=(double*)malloc( sizeof(double)*(Na+2) );
@@ -1650,34 +1864,46 @@ AMI_DLL_CPP int ami_inverse_lens_distortion_old(
   d=sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0));
   b[0]=-1; b[1]=a[0];//1.;
   paso=d;
-  for(i=2;i<(Na+2);i++){
+  for(i=2; i<(Na+2); i++)
+  {
     b[i]=a[i-1]*paso;
     paso*=d;
   }
 
-  if(Na==2){
+  if(Na == 2)
+  {
     Nr=ami_RootCubicPolynomial(b,3,rx);
-    for(i=0;i<Na;i++) ry[i]=0;
+    for(i=0; i<Na; i++)
+      ry[i]=0;
   }
-  else{
-    for(i=0;i<(Na+2);i++) b2[i]=b[Na+1-i];
+  else
+  {
+    for(i=0; i<(Na+2); i++)
+      b2[i]=b[Na+1-i];
     //for(i=0;i<(Na+2);i++) printf("b2[%d]=%1.20e\n",i,b2[i]); system("pause");
     Nr=ami_polynomial_root(b2,Na+1,rx,ry);
   }
   /* WE SELECT THE REAL ROOT NEAR TO 1 */
   root=10e5;
-  for(i=0;i<Nr;i++){
+  for(i=0; i<Nr; i++)
+  {
     //printf("rx[%d]=%e ry[%d]=%e\n",i,rx[i],i,ry[i]);
-    if(fabs(ry[i])<0.00000000001 && fabs(root-1)>fabs(rx[i]-1)) root=rx[i];
+    if(fabs(ry[i])<0.00000000001 && fabs(root-1)>fabs(rx[i]-1))
+      root=rx[i];
   }
-  if(Nr==0) root=1.;
+  if(Nr == 0)
+    root=1.;
 
   /* WE TRANSFORM THE POINT COORDINATES */
   *xt=x0+(x-x0)*root;
   *yt=y0+(y-y0)*root;
   //printf("*xt=%lf,*yt=%lf\n",*xt,*yt);
 
-  free(b); free(rx); free(ry); free(b2);
+  free(b); 
+  free(rx); 
+  free(ry); 
+  free(b2);
+  
   return(0);
 }
 
@@ -1708,33 +1934,38 @@ AMI_DLL_CPP double ami_lens_distortion_estimation(
   double alfa) /* WEIGHT FOR MINIMIZING THE SQUARE OF THE DISTANCE BEWTEEN
               DISTORTED AND UNDISTORTED POINTS */
 {
-  double *pol,suma_dd,suma_Ad,d,A,Error=0;
-  int m,i,j;
+  double *pol, suma_dd, suma_Ad, d, A, Error=0;
+  int m, i, j;
 
   /* WE ALLOCATE MEMORY */
   pol=(double*)malloc( sizeof(double)*5 );
-  for(i=0;i<=4;i++) pol[i]=0.;
+  for(i=0; i<=4; i++)
+    pol[i]=0.;
 
   /* WE ADAPT a[0] TO MINIMIZE THE SQUARE OF THE DISTANCE BEWTEEN
               DISTORTED AND UNDISTORDED POINTS */
-  if(alfa>0){
+  if(alfa > 0)
+  {
     suma_dd=suma_Ad=0;
-    for(m=0;m<Nl;m++){
-      for(i=0;i<Np[m];i++){
+    for(m=0; m<Nl; m++)
+    {
+      for(i=0; i<Np[m]; i++)
+      {
         d=sqrt( (x[m][i]-x0)*(x[m][i]-x0)+(y[m][i]-y0)*(y[m][i]-y0) );
         A=0;
-        for(j=1;j<=Na;j++) A+=a[j]*pow(d,(double) j+1);
+        for(j=1; j<=Na; j++)
+          A+=a[j]*pow(d,(double) j+1);
         suma_dd+=d*d;
         suma_Ad+=A*d;
       }
     }
     a[0]=1-suma_Ad/suma_dd;
-    //printf("\n a[0] ACTUALIZADO = %e\n",a[0]);
   }
 
 
   /* WE COMPUTE THE LENS DISTORTION MODEL */
-  for(i=0;i<Nl; i++){
+  for(i=0; i<Nl; i++)
+  {
     ami_lens_distortion_polynomial_update(x[i],y[i],Np[i],a,Na,x0,y0,k,pol);
   }
   ami_lens_distortion_model_update(a,k,pol);
@@ -1742,7 +1973,8 @@ AMI_DLL_CPP double ami_lens_distortion_estimation(
   /* WE FREE THE MEMORY */
   free(pol);
 
-  for(i=0;i<Nl;i++) Error+=ami_LensDistortionEnergyError(x[i],y[i],Np[i],x0,y0,a,Na);
+  for(i=0; i<Nl; i++)
+    Error += ami_LensDistortionEnergyError(x[i],y[i],Np[i],x0,y0,a,Na);
   return(Error/Nl);
 }
 
@@ -1756,20 +1988,24 @@ AMI_DLL_CPP double ami_lens_distortion_estimation(
 AMI_DLL_CPP void ami_lens_distortion_zoom_normalization(double **x/** Not described */,double **y/** Not described */,int Nl/** Not described */,int *Np/** Not described */,
    double x0/** Not described */,double y0/** Not described */,double *a/** Not described */,int Na/** Not described */)
 {
-  int i,k,m,N=0;
-  double Z,d,suma_Ad,A;
+  int i, k, m, N=0;
+  double Z, d, suma_Ad, A;
 
   /* WE UPDATE a BY ESTIMATING A ZOOM FACTOR Z */
     suma_Ad=0;
-    for(m=0;m<Nl;m++){
-      for(i=0;i<Np[m];i++){
+    for(m=0; m<Nl; m++)
+    {
+      for(i=0; i<Np[m]; i++)
+      {
         N++;
         d=sqrt( (x[m][i]-x0)*(x[m][i]-x0)+(y[m][i]-y0)*(y[m][i]-y0) );
         A=a[0];
-        for(k=1;k<=Na;k++) A+=a[k]*pow(d,(double) k);
-        suma_Ad+=A*A;
+        for(k=1; k<=Na; k++)
+          A+=a[k]*pow(d,(double) k);
+        suma_Ad += A*A;
       }
     }
     Z=sqrt((double) N/suma_Ad);
-    for(k=0;k<=Na;k++) a[k]*=Z;
+    for(k=0; k<=Na; k++)
+      a[k]*=Z;
 }

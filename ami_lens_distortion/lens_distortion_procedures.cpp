@@ -27,36 +27,49 @@ using namespace std;
 double distortion_points_to_line_equation(
     lens_distortion_model &d,line_points &l)
 {
-  int i,j,k;
-  long double suu,suv,svv/*,h0,h1*/,um,vm,h,r[4][3],min,paso,norma;
+  int i, j, k;
+  long double suu, suv, svv/*,h0,h1*/, um, vm, h, r[4][3], min, paso, norma;
   long double cero=10e-100;
   int N=l.get_points().size();
   double a,b,c;
 
-  if(N<2){
+  if(N < 2)
+  {
     printf("Numero de puntos para el Calculo de la recta 2D menor que 2\n");
     return(-1.);
   }
 
   // WE CREATE AN AUXILIAR VECTOR OF POINTS
   vector< point2d<double> > points(l.get_points().size());
-  for(i=0;i<((int)points.size());i++) points[i]=d.evaluation(l.get_points()[i]);
+  for(i=0; i<((int)points.size()); i++)
+    points[i]=d.evaluation(l.get_points()[i]);
 
-  suu=0; suv=0; svv=0; um=0; vm=0;
-  for(i=0;i<N;i++){
+  suu=0;
+  suv=0;
+  svv=0;
+  um=0;
+  vm=0;
+  
+  for(i=0; i<N; i++)
+  {
     um+=points[i].x;
     vm+=points[i].y;
   }
   um/=N; vm/=N;
-  for(i=0;i<N;i++){
+  for(i=0; i<N; i++)
+  {
     suu+=(points[i].x-um)*(points[i].x-um);
     svv+=(points[i].y-vm)*(points[i].y-vm);
     suv+=(points[i].x-um)*(points[i].y-vm);
   }
-  suu/=N; svv/=N; suv/=N;
-  /*  printf("um=%f,vm=%f,suu=%f,svv=%f,suv=%f",um,vm,suu,svv,suv); */
-  if(fabs(suv)<= cero){
-    if(suu<svv && svv>cero){
+  suu/=N; 
+  svv/=N;
+  suv/=N;
+  
+  if(fabs(suv)<= cero)
+  {
+    if(suu<svv && svv>cero)
+    {
       //a=1; b=0; c=-um;
       a=1.;
       b=0.;
@@ -64,7 +77,8 @@ double distortion_points_to_line_equation(
       l.set_abc(a,b,c);
       return(0.);
     }
-    if(svv<suu && suu>cero){
+    if(svv<suu && suu>cero)
+    {
       //a=0; b=1; c=-vm;
       a=0.;
       b=1.;
@@ -78,7 +92,8 @@ double distortion_points_to_line_equation(
 
   r[2][1]=r[3][1]=r[0][0]=r[1][0]=1.;
   h=0.5*(suu-svv)/suv;
-  if(h>0){
+  if(h > 0)
+  {
     r[0][1]=-h-sqrt(1.+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -88,7 +103,8 @@ double distortion_points_to_line_equation(
     r[3][0]=-1./r[2][0];
     r[3][2]=-(r[3][0]*um+vm);
   }
-  else{
+  else
+  {
     r[0][1]=-h+sqrt(1+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -99,24 +115,31 @@ double distortion_points_to_line_equation(
     r[3][2]=-(r[3][0]*um+vm);
   }
 
-  for(j=0;j<4;j++){
+  for(j=0; j<4; j++)
+  {
     norma=sqrt(r[j][0]*r[j][0]+r[j][1]*r[j][1]);
     for(i=0;i<3;i++)
      r[j][i]/=norma;
   }
 
-  min=0.; k=0;
-  for(i=0;i<N;i++){
+  min=0.;
+  k=0;
+  for(i=0; i<N; i++)
+  {
     paso=r[0][0]*points[i].x+r[0][1]*points[i].y+r[0][2];
-    min+=paso*paso;
+    min += paso*paso;
   }
-  for(j=1;j<4;j++){
+  
+  for(j=1; j<4; j++)
+  {
     h=0;
-    for(i=0;i<N;i++){
+    for(i=0; i<N; i++)
+    {
       paso=r[j][0]*points[i].x+r[j][1]*points[i].y+r[j][2];
-      h+=paso*paso;
+      h += paso*paso;
     }
-    if(h<min){
+    if(h < min)
+    {
       k=j;
       min=h;
     }
@@ -143,13 +166,14 @@ double distortion_points_to_line_equation(
 double distortion_points_to_line_equation_quotient(
     lens_distortion_model &d,line_points &l)
 {
-  int i,j,k;
-  long double suu,suv,svv/*,h0,h1*/,um,vm,h,r[4][3],min,paso,norma;
+  int i, j, k;
+  long double suu, suv, svv/*,h0,h1*/, um, vm, h, r[4][3], min, paso, norma;
   long double cero=10e-100;
   int N=l.get_points().size();
   double a,b,c;
 
-  if(N<2){
+  if(N < 2)
+  {
     printf("Numero de puntos para el Calculo de la recta 2D menor que 2\n");
     return(-1.);
   }
@@ -159,21 +183,32 @@ double distortion_points_to_line_equation_quotient(
   for(i=0;i<((int)points.size());i++)
     points[i]=d.evaluation_quotient(l.get_points()[i]);
 
-  suu=0; suv=0; svv=0; um=0; vm=0;
-  for(i=0;i<N;i++){
+  suu=0; 
+  suv=0; 
+  svv=0; 
+  um=0; 
+  vm=0;
+  for(i=0; i<N; i++)
+  {
     um+=points[i].x;
     vm+=points[i].y;
   }
-  um/=N; vm/=N;
-  for(i=0;i<N;i++){
+  um/=N;
+  vm/=N;
+  for(i=0; i<N; i++)
+  {
     suu+=(points[i].x-um)*(points[i].x-um);
     svv+=(points[i].y-vm)*(points[i].y-vm);
     suv+=(points[i].x-um)*(points[i].y-vm);
   }
-  suu/=N; svv/=N; suv/=N;
+  suu/=N; 
+  svv/=N; 
+  suv/=N;
   /*  printf("um=%f,vm=%f,suu=%f,svv=%f,suv=%f",um,vm,suu,svv,suv); */
-  if(fabs(suv)<= cero){
-    if(suu<svv && svv>cero){
+  if(fabs(suv) <= cero)
+  {
+    if(suu<svv && svv>cero)
+    {
       //a=1; b=0; c=-um;
       a=1.;
       b=0.;
@@ -181,7 +216,8 @@ double distortion_points_to_line_equation_quotient(
       l.set_abc(a,b,c);
       return(0.);
     }
-    if(svv<suu && suu>cero){
+    if(svv<suu && suu>cero)
+    {
       //a=0; b=1; c=-vm;
       a=1.;
       b=0.;
@@ -195,7 +231,8 @@ double distortion_points_to_line_equation_quotient(
 
   r[2][1]=r[3][1]=r[0][0]=r[1][0]=1.;
   h=0.5*(suu-svv)/suv;
-  if(h>0){
+  if(h > 0)
+  {
     r[0][1]=-h-sqrt(1.+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -205,7 +242,8 @@ double distortion_points_to_line_equation_quotient(
     r[3][0]=-1./r[2][0];
     r[3][2]=-(r[3][0]*um+vm);
   }
-  else{
+  else
+  {
     r[0][1]=-h+sqrt(1+h*h);
     r[0][2]=-(um+r[0][1]*vm);
     r[1][1]=-1./r[0][1];
@@ -216,24 +254,29 @@ double distortion_points_to_line_equation_quotient(
     r[3][2]=-(r[3][0]*um+vm);
   }
 
-  for(j=0;j<4;j++){
+  for(j=0; j<4; j++)
+  {
     norma=sqrt(r[j][0]*r[j][0]+r[j][1]*r[j][1]);
-    for(i=0;i<3;i++)
+    for(i=0; i<3; i++)
      r[j][i]/=norma;
   }
 
   min=0.; k=0;
-  for(i=0;i<N;i++){
+  for(i=0; i<N; i++)
+  {
     paso=r[0][0]*points[i].x+r[0][1]*points[i].y+r[0][2];
     min+=paso*paso;
   }
-  for(j=1;j<4;j++){
+  for(j=1; j<4; j++)
+  {
     h=0;
-    for(i=0;i<N;i++){
+    for(i=0; i<N; i++)
+    {
       paso=r[j][0]*points[i].x+r[j][1]*points[i].y+r[j][2];
       h+=paso*paso;
     }
-    if(h<min){
+    if(h < min)
+    {
       k=j;
       min=h;
     }
