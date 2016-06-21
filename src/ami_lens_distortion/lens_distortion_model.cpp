@@ -176,7 +176,6 @@ AMI_DLL_CPP point2d<double> lens_distortion_model::inverse_evaluation_quotient(p
           b[i]=0;
         else 
         {
-         //printf("i=%d, d[%d]=%e\n",i,m,d[m]);
          b[i]=norm*d[m++];
         }
 
@@ -184,13 +183,10 @@ AMI_DLL_CPP point2d<double> lens_distortion_model::inverse_evaluation_quotient(p
       //for(i=0;i<=degree;i++) printf("b[%d]=%e\n",i,b[i]);
 
       Nr=ami_polynomial_root(b,degree,rx,ry);
-      //printf("degree=%d Nr=%d\n",degree,Nr);
-      //system("pause");
       /* WE SELECT THE smaller REAL ROOT */
       root=1e30;
       for(i=0; i<Nr; i++)
       {
-        //printf("rx[%d]=%e ry[%d]=%e\n",i,rx[i],i,ry[i]);
         //if(fabs(ry[i])<0.00000000001 && fabs(root-norm)>fabs(rx[i]-norm)) root=rx[i];
         if(fabs(ry[i])<0.00000000001 && fabs(root)>fabs(rx[i])) root=rx[i];
       }
@@ -202,8 +198,6 @@ AMI_DLL_CPP point2d<double> lens_distortion_model::inverse_evaluation_quotient(p
         //return point2d<double>(0,0);
         return p;
       }
-
-      //printf("root=%lf,norm=%lf,norm2=%lf\n",root,norm,norm2);
 
       /* WE TRANSFORM THE POINT COORDINATES */
       x = c.x + root * x_ / norm;
@@ -355,7 +349,6 @@ AMI_DLL_CPP point2d<double> lens_distortion_model::inverse_evaluation_quotient(c
           b[i]=0;
         else
         {
-         //printf("i=%d, d[%d]=%e\n",i,m,d[m]);
          b[i]=norm*d[m++];
         }
 
@@ -363,12 +356,10 @@ AMI_DLL_CPP point2d<double> lens_distortion_model::inverse_evaluation_quotient(c
       //for(i=0;i<=degree;i++) printf("b[%d]=%e\n",i,b[i]);
 
       Nr=ami_polynomial_root(b,degree,rx,ry);
-      //printf("degree=%d Nr=%d\n",degree,Nr);
       /* WE SELECT THE smaller REAL ROOT */
       root=1e30;
       for(i=0; i<Nr; i++)
       {
-        //printf("rx[%d]=%e ry[%d]=%e\n",i,rx[i],i,ry[i]);
         //if(fabs(ry[i])<0.00000000001 && fabs(root-norm)>fabs(rx[i]-norm)) root=rx[i];
         if(fabs(ry[i])<0.00000000001 && fabs(root)>fabs(rx[i])) root=rx[i];
       }
@@ -378,8 +369,6 @@ AMI_DLL_CPP point2d<double> lens_distortion_model::inverse_evaluation_quotient(c
         cout << "It's no possible to compute the inverse_evaluation_quotient: Problem with polynomial roots<0" << endl;
         return p;
       }
-
-      //printf("root=%lf,norm=%lf,norm2=%lf\n",root,norm,norm2);
 
       /* WE TRANSFORM THE POINT COORDINATES */
       x = c.x + root * x_ / norm;

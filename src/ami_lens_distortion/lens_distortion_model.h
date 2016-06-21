@@ -150,7 +150,7 @@ public:
  }
 
  void set_type(const int type2){type=type2;}
- int get_type(){return(type);}
+ int get_type() const {return(type);}
  
   /**
   * \fn int read(char name[300])

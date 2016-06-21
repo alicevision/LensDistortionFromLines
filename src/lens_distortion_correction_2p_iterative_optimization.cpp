@@ -96,15 +96,15 @@ double energy_minimization(lens_distortion_model &ldm, image_primitives &ip,
 double iterative_optimization(
   const ami::subpixel_image_contours &contours,
   image_primitives &i_primitives,
-  float distance_point_line_max_hough,
+  const float distance_point_line_max_hough,
   const int max_lines,
   const float angle_resolution,
   const float distance_resolution,
   const float distortion_parameter_resolution,
   const float angle_point_orientation_max_difference,
-  bool opt_center,
-  int width,
-  int height
+  const bool opt_center,
+  const int width,
+  const int height
 )
 {
   double final_error = 0.;

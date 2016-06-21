@@ -18,15 +18,15 @@
 double line_equation_distortion_extraction_improved_hough(
                   const subpixel_image_contours &subpixel_contours,
                   image_primitives &image_primitive,
-                  float distance_point_line_max,
-                  int nlineas = 100,
-                  float angle_resolution = 0.1,
-                  float distance_resolution = 1.,
-                  float initial_distortion_parameter=0.0,
-                  float final_distortion_parameter=1.0,
-                  float distortion_parameter_resolution=0.1,
-                  float angle_point_orientation_max_difference=2.0,
-                  bool lens_distortion_estimation=true,
-                  lens_distortion_model ini_ldm = lens_distortion_model());
+                  const float distance_point_line_max,
+                  const int nlineas = 100,
+                  const float angle_resolution = 0.1,
+                  const float distance_resolution = 1.,
+                  const float initial_distortion_parameter=0.0,
+                  const float final_distortion_parameter=1.0,
+                  const float distortion_parameter_resolution=0.1,
+                  const float angle_point_orientation_max_difference=2.0,
+                  const bool lens_distortion_estimation=true,
+                  const lens_distortion_model& ini_ldm = lens_distortion_model());
 
 #endif

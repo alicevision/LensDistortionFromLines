@@ -49,7 +49,7 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_distance_2v(
 {
   int i, j, k/*,l*/;
   double *A, *x2, *y2, *d1, *d2/*,s_yy,y_m,x2_m,s_max,x_m,s_xx,y2_m ,xA_m*/;
-//  double /*xd1_m,yA_m,yd2_m,xd2_m,yd1_m*/;
+  //double /*xd1_m,yA_m,yd2_m,xd2_m,yd1_m*/;
   double paso, **pol1, **pol2, **p_xx, **p_xy, **p_yy;
   /* WE CHECK alfa VALUE */
   if(Np < 3)
@@ -211,7 +211,6 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
   ami_calloc2d(pol_y,double,5,5);
   p3=(double*) malloc(sizeof(double)*5);
 
-  //printf("\n");
   //for(i=0;i<=4;i++) for(j=0;j<=4;j++) printf("pol_o[%d][%d]=%e\n",i,j,pol[i][j]);
   /* WE NORMALIZE POLYNOM COEFICIENT */
   sx=pow(pol[4][0],(double) 0.25);
@@ -226,7 +225,6 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
         pol[i][j]/=pow(sy,(double) j);
     }
   }
-  //printf("\n");
   //for(i=0;i<=4;i++) for(j=0;j<=4;j++) printf("pol[%d][%d]=%e\n",i,j,pol[i][j]);
 
   /* WE COMPUTE THE DERIVATIVES OF THE POLYNOM */
@@ -294,7 +292,6 @@ AMI_DLL_CPP int ami_lens_distortion_model_update_2v(
       }
     }
   }
-  //printf("Minimun Value of the 4 DEGREE POLYNOMIAL ERROR:%e\n",Emin);
   /* WE UPDATE THE DISTORSION POLYNOMIAL MODEL */
   a[k1]+=(yr/sx);
   a[k2]+=(xr/sy);
@@ -948,7 +945,6 @@ AMI_DLL_CPP int ami_lens_distortion_model_update(
     p[i]=ami_polynomial_evaluation(pol,4,x[i]);
   
   j = 0;
-  //printf("M=%d\n",M);
   if(M == 3)
   {
     if(p[j]>p[1] /*&& fabs(x[1])<1. */) j=1;
@@ -959,7 +955,6 @@ AMI_DLL_CPP int ami_lens_distortion_model_update(
 
   a[k] += x[j];
 
-  //printf("%1.0e ",x[j]);
   //if(k==1 && a[1]<0) a[1]=0;
   //if(k==Na && a[k]<0) a[k]=0;
   free(x);
@@ -1172,7 +1167,6 @@ AMI_DLL_CPP double ami_points_to_line_equation(
   suu/=N; 
   svv/=N; 
   suv/=N;
-  /*  printf("um=%f,vm=%f,suu=%f,svv=%f,suv=%f",um,vm,suu,svv,suv); */
   if(fabs(suv)<= cero)
   {
     if(suu<svv && svv>cero)
@@ -1350,7 +1344,6 @@ AMI_DLL_CPP double ami_points_to_line_equation_outlier_elimination(
   suu/=N;
   svv/=N;
   suv/=N;
-  /*  printf("um=%f,vm=%f,suu=%f,svv=%f,suv=%f",um,vm,suu,svv,suv); */
   if(fabs(suv)<= cero)
   {
     if(suu<svv && svv>cero)

@@ -159,10 +159,10 @@ AMI_DLL_CPP point2d<double> subpixel_image_contours::
  * \author Luis Alvarez
  */
 void subpixel_image_contours::clean(
-const int neighborhood_radius, /** radius of neighborhood to take into account */
-const int min_neighbor_points, /** min number of contour points in a neighborhood */
-const double min_orientation_value, /** min average scalar product of neighborhood point orientation */
-const int min_distance_point) /** minimum distance between contour points */
+  const int neighborhood_radius, /** radius of neighborhood to take into account */
+  const int min_neighbor_points, /** min number of contour points in a neighborhood */
+  const double min_orientation_value, /** min average scalar product of neighborhood point orientation */
+  const int min_distance_point) /** minimum distance between contour points */
 {
   // WE CHECK THAT THE CONTOURS ARE NOT EMPTY
   if(c==NULL || x==NULL || y==NULL || coseno==NULL || seno==NULL)

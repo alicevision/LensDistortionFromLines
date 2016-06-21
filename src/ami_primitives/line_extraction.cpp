@@ -54,9 +54,9 @@ void updateContoursFromLensDistortion(
   const vector<int>& index, /** INDEX OF THE SUBPIXEL IMAGE CONTOURS */
   double &dmi, /** DISTANCE ... */
   const subpixel_image_contours &subpixel_contours, /** INPUT CONTOUR SUBPIXEL INFORMATION */
-  lens_distortion_model ini_ldm, /** INITIAL DISTORTION MODEL */
-  double xc, /** COORDONATE X OF THE CENTER OF THE IMAGE */
-  double yc, /** COORDONATE Y OF THE CENTER OF THE IMAGE */
+  const lens_distortion_model& ini_ldm, /** INITIAL DISTORTION MODEL */
+  double& xc, /** COORDONATE X OF THE CENTER OF THE IMAGE */
+  double& yc, /** COORDONATE Y OF THE CENTER OF THE IMAGE */
   const int height,
   const int width)
 {
@@ -170,11 +170,11 @@ void updateContoursFromLensDistortion(
 double estimateFirstLensDistortionCoef(
         double &best_distortion_parameter, /** OUTPUT THE BEST DISTORTION MODEL WITH MAXIMUM DISTORTION LEVEL */
         image_primitives &image_primitive, /** OUTPUT IMAGE PRIMITIVES WHERE LINES AND DISTORTION MODEL IS DEFINED */
-        lens_distortion_model ini_ldm, /** INITIAL DISTORTION MODEL */
+        const lens_distortion_model& ini_ldm, /** INITIAL DISTORTION MODEL */
         const double xc, /** COORDONATE X OF THE CENTER OF THE IMAGE */
         const double yc, /** COORDONATE Y OF THE CENTER OF THE IMAGE */
         const vector<int> index, /** INDEX OF THE SUBPIXEL IMAGE CONTOURS */ 
-        const subpixel_image_contours sp_contours_modifed, /** CONTOUR SUBPIXEL INFORMATION INITIALIZE WITH THE FISRT LENS DISTORTION MODEL */
+        const subpixel_image_contours& sp_contours_modifed, /** CONTOUR SUBPIXEL INFORMATION INITIALIZE WITH THE FISRT LENS DISTORTION MODEL */
         const double ami_pi, /** THE PI VALUE */ 
         const float angle_point_orientation_max_difference, /** MAX DIFFERENCE (IN DEGREES) OF THE POINT ORIENTATION ANGLE AND THE LINE ANGLE */
         const float distance_resolution, /** DISTANCE RESOLUTION */
@@ -636,13 +636,13 @@ void computePointsLinePts(
   image_primitives &image_primitive_original, /** IMAGE_PRIMITIVES OBJECTS FOR ORIGINAL POINTS */
   image_primitives &image_primitive,  /** IMAGE PRIMITIVES WHERE LINES AND DISTORTION MODEL IS DEFINED */ 
   const int nlineas_plus, /** NUMBER OF LINES TO RETURN */
-  const vector<int> index, /** INDEX OF THE SUBPIXEL IMAGE CONTOURS */
-  const subpixel_image_contours sp_contours_modifed, /** CONTOUR SUBPIXEL INFORMATION INITIALIZE WITH THE FISRT LENS DISTORTION MODEL */
-  const subpixel_image_contours subpixel_contours, /** CONTOUR SUBPIXEL INFORMATION */
-  lens_distortion_model ld, /** LENS DISTORTION MODEL */
+  const vector<int>& index, /** INDEX OF THE SUBPIXEL IMAGE CONTOURS */
+  const subpixel_image_contours& sp_contours_modifed, /** CONTOUR SUBPIXEL INFORMATION INITIALIZE WITH THE FISRT LENS DISTORTION MODEL */
+  const subpixel_image_contours& subpixel_contours, /** CONTOUR SUBPIXEL INFORMATION */
+  const lens_distortion_model& ld, /** LENS DISTORTION MODEL */
   const float distance_point_line_max, /** MAX DISTANCE ALLOWED BETWEEN POINTS AND ASSOCIATED LINES */
   const float distance_resolution /** DISTANCE RESOLUTION */,
-  double dot_product_min)
+  const double dot_product_min)
 {
   for(int k=0; k<nlineas_plus; k++)
   {
@@ -754,10 +754,10 @@ void removeLines(
   const double ami_pi, /** THE PI VALUE */
   const float distance_point_line_max, /** MAX DISTANCE ALLOWED BETWEEN POINTS AND ASSOCIATED LINES */
   const float angle_point_orientation_max_difference, /** MAX DIFFERENCE (IN DEGREES) OF THE POINT ORIENTATION ANGLE AND THE LINE ANGLE */
-  image_primitives image_primitive, /** IMAGE PRIMITIVES WHERE LINES AND DISTORTION MODEL IS DEFINED */
-  const int width, 
+  image_primitives& image_primitive, /** IMAGE PRIMITIVES WHERE LINES AND DISTORTION MODEL IS DEFINED */
+  const int width,
   const subpixel_image_contours &subpixel_contours, /** CONTOUR SUBPIXEL INFORMATION */
-  double dot_product_min)
+  double& dot_product_min)
 {
   dot_product_min = cos(2.*ami_pi*angle_point_orientation_max_difference/180.);
   if(dot_product_min < 0.95) 
@@ -885,17 +885,17 @@ void removeLines(
 double line_equation_distortion_extraction_improved_hough(
   const subpixel_image_contours &subpixel_contours /** INPUT CONTOUR SUBPIXEL INFORMATION */,
   image_primitives &image_primitive /** OUTPUT IMAGE PRIMITIVES WHERE LINES AND DISTORTION MODEL IS DEFINED */,
-  float distance_point_line_max /** INPUT MAX DISTANCE ALLOWED BETWEEN POINTS AND ASSOCIATED LINES */,
-  int nlineas /** INPUT NUMBER OF LINES TO RETURN */,
+  const float distance_point_line_max /** INPUT MAX DISTANCE ALLOWED BETWEEN POINTS AND ASSOCIATED LINES */,
+  const int nlineas /** INPUT NUMBER OF LINES TO RETURN */,
   const float angle_resolution /** INPUT ANGLE RESOLUTION */,
-  float distance_resolution  /** INPUT DISTANCE RESOLUTION */,
+  const float distance_resolution  /** INPUT DISTANCE RESOLUTION */,
   const float initial_distortion_parameter /** INPUT INITIAL VALUE OF NORMALIZED DISTORTION PARAMETER */,
   const float final_distortion_parameter /** INPUT FINAL VALUE NORMALIZED DISTORTION PARAMETER */,
   const float distortion_parameter_resolution /** INPUT DISTORTION PARAMETER DISCRETIZATION STEP */,
   const float angle_point_orientation_max_difference /** MAX DIFFERENCE (IN DEGREES) OF THE POINT ORIENTATION ANGLE
     AND THE LINE ANGLE */,
-  bool lens_distortion_estimation /** BOOL TO CONTROL IF WE ESTIMATE THE LENS DISTORTION MODEL */,
-  lens_distortion_model ini_ldm /** INITIAL DISTORTION MODEL */)
+  const bool lens_distortion_estimation /** BOOL TO CONTROL IF WE ESTIMATE THE LENS DISTORTION MODEL */,
+  const lens_distortion_model& ini_ldm /** INITIAL DISTORTION MODEL */)
 {
   int width = subpixel_contours.get_width();
   int height = subpixel_contours.get_height();

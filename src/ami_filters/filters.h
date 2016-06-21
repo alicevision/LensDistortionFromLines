@@ -612,10 +612,10 @@ void canny(ami::image<T> input /**INPUT IMAGE (GRAY SCALE)*/,
 */
 template<class T>
 ami::subpixel_image_contours canny(
-ami::image<T> input /**INPUT IMAGE (GRAY SCALE)*/,
-ami::image<T> &edges /**OUTPUT IMAGE WITH THE EDGES*/,
-const float canny_low_threshold /**PERCENTAGE FOR THE LOW THRESHOLD (BETWEEN 0 AND 1)*/,
-const float canny_high_threshold /**PERCENTAGE FOR THE HIGH THRESHOLD (BETWEEN 0 AND 1)*/)
+  const ami::image<T>& input /**INPUT IMAGE (GRAY SCALE)*/,
+  ami::image<T> &edges /**OUTPUT IMAGE WITH THE EDGES*/,
+  const float canny_low_threshold /**PERCENTAGE FOR THE LOW THRESHOLD (BETWEEN 0 AND 1)*/,
+  const float canny_high_threshold /**PERCENTAGE FOR THE HIGH THRESHOLD (BETWEEN 0 AND 1)*/)
 {
   int size_=input.width()*input.height();
   float *seno   = new float[size_];//edge point orientation

@@ -204,7 +204,7 @@ double distortion_points_to_line_equation_quotient(
   suu/=N; 
   svv/=N; 
   suv/=N;
-  /*  printf("um=%f,vm=%f,suu=%f,svv=%f,suv=%f",um,vm,suu,svv,suv); */
+
   if(fabs(suv) <= cero)
   {
     if(suu<svv && svv>cero)
