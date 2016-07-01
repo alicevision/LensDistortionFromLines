@@ -939,7 +939,7 @@ double line_equation_distortion_extraction_improved_hough(
 
   subpixel_image_contours sp_contours_modifed(width, height);
   const vector<int>& index = subpixel_contours.get_index();
-    
+
   // UPDATE THE SUBPIXEL_CONTOURS OBJECT WITH THE INITIAL LENS DISTORTION MODEL
   updateContoursFromLensDistortion(sp_contours_modifed, index, dmi, subpixel_contours, ini_ldm, xc, yc, height, width);
 
@@ -1002,7 +1002,6 @@ double line_equation_distortion_extraction_improved_hough(
       if(image_primitive.get_lines()[i].get_points().size() > 2)
       {
         image_primitive_corrected.get_lines()[i].points_to_equation();
-        cout << "Nombre de points sur la ligne " << i << " dans le if1 corrected : " << image_primitive_corrected.get_lines()[i].get_points().size() << endl;
         double a,b,c;
         image_primitive_corrected.get_lines()[i].get_abc(a,b,c);
         image_primitive.get_lines()[i].set_abc(a,b,c);
@@ -1035,7 +1034,6 @@ double line_equation_distortion_extraction_improved_hough(
     for(int i=0; i<(int)image_primitive.get_lines().size(); i++)
     {
 			image_primitive_corrected.get_lines()[i].points_to_equation();
-      cout << "Nombre de points sur la ligne " << i << " dans le if2 corrected : " << image_primitive_corrected.get_lines()[i].get_points().size() << endl;
 			double a,b,c;
 			image_primitive_corrected.get_lines()[i].get_abc(a,b,c);
 			image_primitive.get_lines()[i].set_abc(a,b,c);

@@ -114,7 +114,6 @@ AMI_DLL_CPP int ami_lens_distortion_polynomial_update_distance_2v(
 }
 
 
-
 /**
  * \fn double ami_lens_distortion_estimation_2v(double **x,double **y,int Nl,int *Np,double x0,double y0,double *a,int Na,int k1,int k2,double alfa)
  * \brief Update of the lens distortion polynomial model for 2 variables. If alfa>0 we adapt a[0] to minimize the square distance beewten distorted and undistorted points and we add a term to the polynomial also minimizing such distance with weight alfa
@@ -157,7 +156,6 @@ AMI_DLL_CPP double ami_lens_distortion_estimation_2v(double **x,double **y,int N
       }
     }
     a[0]=1-suma_Ad/suma_dd;
-    //printf("\n a[0] ACTUALIZADO = %e\n",a[0]);
   }
 
 
@@ -468,7 +466,6 @@ AMI_DLL_CPP double ami_determinante(double **A,int N)
 {
   int i, k, l, cont;
   double **B,paso;
-  // printf("N=%d ",N);
   if(N == 1)
     return(A[0][0]);
   ami_calloc2d(B,double,N-1,N-1);
@@ -1026,7 +1023,6 @@ int i/*,j*/;
 
   /* WE FREE MEMORY */
   free(x2); free(y2);
-//printf("Distortion Error =%e\n",(s_xx*s_yy-s_xy*s_xy)/s_max);
   return((s_xx*s_yy-s_xy*s_xy)/s_max);
 
 }
@@ -1052,7 +1048,7 @@ AMI_DLL_CPP double ami_LensDistortionEnergyError(
   double *a, /* Lens Distortion Polynomial model (INPUT)*/
   int Na) /* Degree of Polynomial model (INPUT)*/
 {
-int i/*,j*/;
+  int i/*,j*/;
   double A,*x2,*y2,d,x2_m,y2_m,s_xx,s_yy,s_xy/*,y_m,s_max,x_m,xA_m,xd_m,yA_m,yd_m*/;
   /* WE ALLOCATE MEMORY */
    if(Np < 3)
@@ -1097,7 +1093,6 @@ int i/*,j*/;
   /* WE FREE MEMORY */
   free(x2); 
   free(y2);
-//printf("Distortion Error =%e\n",(s_xx*s_yy-s_xy*s_xy));
   return((s_xx*s_yy-s_xy*s_xy));
 
 }
@@ -1554,7 +1549,6 @@ AMI_DLL_CPP double ami_distortion_model_estimation_2p(
   (*a)[0]=1; for(i=1;i<=*Na;i++) (*a)[i]=0;
   /* WE COMPUTE THE DISTORSION MODEL */
    /*double residual_variance=*/ami_lens_distortion_estimation_2v(xx,yy,Nl,Np,(double) 0.,(double) 0.,*a,*Na,2,4,(double) 0.);
-  //printf("Residual Variance =%e with Na=%d\n",residual_variance,*Na); system("PAUSE");
   /* LLAMO A LA NORMALIZACION DEL ZOOM */
   // ami_lens_distortion_zoom_normalization(xx,yy,Nl,Np,(double) 0.,(double) 0.,a,Na);
 
@@ -1757,7 +1751,6 @@ AMI_DLL_CPP int ami_inverse_lens_distortion(
   root=10e5;
   for(i=0; i<Nr; i++)
   {
-    //printf("rx[%d]=%e ry[%d]=%e\n",i,rx[i],i,ry[i]);
     if(fabs(ry[i])<0.00000000001 && fabs(root-1)>fabs(rx[i]-1))
       root=rx[i];
   }
@@ -1880,7 +1873,6 @@ AMI_DLL_CPP int ami_inverse_lens_distortion_old(
   root=10e5;
   for(i=0; i<Nr; i++)
   {
-    //printf("rx[%d]=%e ry[%d]=%e\n",i,rx[i],i,ry[i]);
     if(fabs(ry[i])<0.00000000001 && fabs(root-1)>fabs(rx[i]-1))
       root=rx[i];
   }
@@ -1890,7 +1882,6 @@ AMI_DLL_CPP int ami_inverse_lens_distortion_old(
   /* WE TRANSFORM THE POINT COORDINATES */
   *xt=x0+(x-x0)*root;
   *yt=y0+(y-y0)*root;
-  //printf("*xt=%lf,*yt=%lf\n",*xt,*yt);
 
   free(b); 
   free(rx); 
@@ -1905,14 +1896,14 @@ AMI_DLL_CPP int ami_inverse_lens_distortion_old(
  *  \brief  Function to compute the lens distortion model
  *  \pre Any parameter can be null.
  *  \pre Na has to be positive.
- *  \param [out] x,y Original coleccion of lines distribution
+ *  \param [out] x,y Original collection of lines distribution
  *  \param [in] Nl Number of lines
  *  \param [in] Np Number of points for each line
  *  \param [in] x0,y0 Center of the image
  *  \param [out] a Lens Distortion Polynomial model
  *  \param [in] Na Degree of Polynomial model
- *  \param [in] k Coeficient of the lens distortion polynom model to be updated
- *  \param [in] alfa Weight for minimizing the square of the distance bewteen distorted and undistorted points
+ *  \param [in] k Coefficient of the lens distortion polynom model to be updated
+ *  \param [in] alfa Weight for minimizing the square of the distance between distorted and undistorted points
  *  \return Error
  * \author Luis Alvarez
  */

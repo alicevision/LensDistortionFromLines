@@ -177,6 +177,7 @@ double iterative_optimization(
     next_num_points = local_num_points;
     convergence_iterations++;
   }
+  
   //We take the last and best image primitives object and model
   i_primitives = previous_ip;
   i_primitives.set_distortion(best_model);
@@ -283,13 +284,13 @@ int main(int argc, char *argv[])
     ini_ldm.set_type(POLYNOMIAL);
   else
     ini_ldm.set_type(DIVISION);
-  
-  image_primitives i_primitives; //object to store output edge line structure
-  ami::subpixel_image_contours contours;
 
   //We read all the input image of the directory
   for(const std::string& input_filepath: input_files)
   {
+    image_primitives i_primitives; //object to store output edge line structure
+    ami::subpixel_image_contours contours;
+    
     const std::string input_filename = get_filename(input_filepath);
     std::string input_basename, input_extension;
     split_filename(input_filename, input_basename, input_extension);
@@ -357,9 +358,6 @@ int main(int argc, char *argv[])
       ini_ldm
     );
     
-    cout << "...lines detected: " << i_primitives.get_lines().size() <<
-            " with " << count_points(i_primitives) << " points" << std::endl;
-
     //ALGORITHM STAGE 3 : We apply the iterative optimization process
     double final_error = iterative_optimization(
                             contours,
@@ -374,7 +372,9 @@ int main(int argc, char *argv[])
                             width,
                             height
                           );
-
+    
+    cout << "...lines detected: " << i_primitives.get_lines().size() <<
+        " with " << count_points(i_primitives) << " points" << std::endl;
     //We check if the iterative optimization process finishes properly
     if(i_primitives.get_lines().size() == 0)
     {
@@ -409,8 +409,7 @@ int main(int argc, char *argv[])
       else
       {
         lens_distortion_model ldm = i_primitives.get_distortion();
-        int vs = 0;
-        (ldm.get_d().size() == 2) ? vs = 3 : vs = 5;
+        int vs = (ldm.get_d().size() == 2) ? 3 : 5;
         double *a = new double[vs];
         for(int i=0, ldmind = 0; i < vs; i++)
         {

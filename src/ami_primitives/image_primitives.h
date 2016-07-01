@@ -192,11 +192,10 @@ public :
     fprintf(f, "value of distortion parameter %d  = %.20g\n",i,distortion.get_d()[i]);
   }
   //SAVE POINTS
-  /*fprintf(f,"%d POINTS\n",(int)points.size());
   for(unsigned int i=0;i<points.size();i++)
   {
           fprintf(f, "%.20g %.20g\n",points[i].x,points[i].y);
-  }*/
+  }
 
   //SAVE STRAIGHT
   fprintf(f,"\nNUMBER OF LINES = %d \n",(int)lines.size());

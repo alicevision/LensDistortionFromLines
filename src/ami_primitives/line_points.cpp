@@ -44,7 +44,7 @@ AMI_DLL_CPP double line_points::points_to_equation()
 
  if(N < 2)
  {
-   printf("Numero de puntos para el Calculo de la recta 2D menor que 2 ---- points_to_equation() LP\n");
+   printf("Numero de puntos para el Calculo de la recta 2D menor que 2\n");
    return(-1.);
  }
 
@@ -91,7 +91,7 @@ AMI_DLL_CPP double line_points::points_to_equation()
      rect.set_c((double) -vm);
      return(0);
    }
-   printf("No se pudo calcular la recta 2D ---- points_to_equation() LP\n");
+   printf("No se pudo calcular la recta 2D\n");
    return(-1);
  }
 
