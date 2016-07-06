@@ -488,7 +488,7 @@ double update_rsqmax(point2d<double> dc, int w, int h)
 
 //------------------------------------------------------------------------------
 
-void compute_ps(double &p1, double &p2, lens_distortion_model &ldm,
+void compute_ps(double &p1, double &p2, const lens_distortion_model &ldm,
 								int w, int h, bool quo)
 {
 	double dmi = update_rsqmax(ldm.get_distortion_center(),w,h);

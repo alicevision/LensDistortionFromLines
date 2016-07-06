@@ -18,7 +18,7 @@
 //PARAMETERS: THE EDGE POSITION, THE ORIENTATION (SIN,COS) AND THE LENS
 //            DISTORTION MODEL
 vector<float> orientation_update(point2d<double> p, float seno, float coseno,
-                                  lens_distortion_model ldm)
+                                 const lens_distortion_model& ldm)
 {
 	vector<float> corrected_orientation;
 	double a,b,norma;
@@ -188,9 +188,9 @@ double estimateFirstLensDistortionCoef(
         const double max_norm, /**  */
         const double paso_angle, /**  */
         const float angle_resolution, /** INPUT ANGLE RESOLUTION */
-        const double dmi, /** DISTANCE ... */
-        double *coseno, /** ORIENTATION DISCRETIZATION COSINUS */
-        double *seno /** ORIENTATION DISCRETIZATION SINUS */)
+        const double dmi,
+        const std::vector<double>& coseno, /** ORIENTATION DISCRETIZATION COSINUS */
+        const std::vector<double>& seno /** ORIENTATION DISCRETIZATION SINUS */)
 {
   double votation_score;
   double max_votation_score = -1;
@@ -364,7 +364,7 @@ double estimateFirstLensDistortionCoef(
     vector<int> n(nlineas_plus);
     vector<int> m_max(nlineas_plus);
     vector<int> n_max(nlineas_plus);
-    vector<line_points> lines(nlineas_plus);
+    vector<line_points> lines(nlineas_plus); // output lines
     float first_max_score = 0;
     
     for(int l=0; l<nlineas_plus; l++)
@@ -902,12 +902,9 @@ double line_equation_distortion_extraction_improved_hough(
   double xc = (double) width/2.;
   double yc = (double) height/2.;
   double best_distortion_parameter = 0;
-  double *seno,*coseno;
   double ami_pi = acos((double) -1.);
   double max_norm = (double) width*width+height*height;
   int nlineas_plus = nlineas;
-  if(lens_distortion_estimation == true)
-    nlineas_plus = nlineas;
   double dmi = 0.;
 
   // WE CHECK DISCRETIZATION PARAMETER VALUES
@@ -927,11 +924,11 @@ double line_equation_distortion_extraction_improved_hough(
   const int height_score = (int) (180./angle_resolution);
   int depth_score = distortion_parameter_resolution > 0 ? (int)(1.+(final_distortion_parameter-initial_distortion_parameter)/distortion_parameter_resolution) : 1;
   // WE DEFINE ORIENTATION DISCRETIZATION VECTOR
-  seno   = (double*)malloc(sizeof(double)*height_score);
-  coseno = (double*)malloc(sizeof(double)*height_score);
+  std::vector<double> coseno(height_score);
+  std::vector<double> seno(height_score);
   const double paso_angle = angle_resolution*ami_pi/180.;
   
-  for(int l=0; l<height_score; l++) 
+  for(int l=0; l<height_score; l++)
   {
     coseno[l] = cos((double) l*paso_angle);
     seno[l] = sin((double) l*paso_angle);
@@ -970,7 +967,7 @@ double line_equation_distortion_extraction_improved_hough(
     image_primitive.set_distortion(ld);
     image_primitive_original.set_distortion(ld);
   }
-  else
+  else // TODO: can be removed?
   {
     ld.set_distortion_center(point2d<double>(xc,yc));
     ld.get_d().resize(2);
@@ -1052,9 +1049,6 @@ double line_equation_distortion_extraction_improved_hough(
     }
   }
 
-  // WE FREE THE MEMORY
-  free(seno); 
-  free(coseno);
   // WE SET THE ORIGINAL IMAGE PRIMITIVES AND RETURN THE NUMBER OF VOTES
   image_primitive = image_primitive_original;
 

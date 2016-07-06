@@ -292,10 +292,10 @@ double distortion_points_to_line_equation_quotient(
 //DISTORTION PARAMETER AND CENTER OPTIMIZATION WITH POLYNOMIAL MODEL (2 PARAMETERS)
 double model_center_estimation_2p_polynomial(
    point2d<double>  distortion_center /** INPUT DISTORTION CENTER */,
-   vector< line_points > &lines /** INPUT VECTOR OF LINES TO COMPUTE */,
+   std::vector<line_points> &lines /** INPUT/OUTPUT VECTOR OF LINES TO COMPUTE */,
    lens_distortion_model &d /** OUTPUT DISTORTION MODEL */,
    int w, int h,
-   vector<bool> v)
+   const std::vector<bool>& v)
 {
   lens_distortion_model ldm;
   bool debug = false;
@@ -737,11 +737,11 @@ double model_center_estimation_2p_polynomial(
 //DISTORTION PARAMETER AND CENTER OPTIMIZATION WITH DIVISION MODEL (2 PARAMETERS)
 double model_center_estimation_2p_quotient(
    point2d<double>  distortion_center /** INPUT DISTORTION CENTER */,
-   vector< line_points > &lines /** INPUT VECTOR OF LINES TO COMPUTE */,
+   std::vector<line_points> &lines /** INPUT/OUTPUT VECTOR OF LINES TO COMPUTE */,
    lens_distortion_model &d /** OUTPUT DISTORTION MODEL */,
    int w /**IMAGE WIDTH*/,
    int h /**IMAGE HEIGHT*/,
-   vector<bool> v)
+   const std::vector<bool>& v)
 {
 	lens_distortion_model ldm;
 	bool debug = false;

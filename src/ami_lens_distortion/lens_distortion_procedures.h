@@ -16,16 +16,16 @@
 using namespace std;
 
 double model_center_estimation_2p_polynomial(point2d<double>  distortion_center,
-																						 vector< line_points > &lines,
+																						 std::vector< line_points > &lines,
 																						 lens_distortion_model &d,
 																						 int w, int h,
-																						 vector<bool> v);
+																						 const std::vector<bool>& v);
 
 double model_center_estimation_2p_quotient(point2d<double>  distortion_center,
-																					 vector< line_points > &lines,
+																					 std::vector< line_points > &lines,
 																					 lens_distortion_model &d,
 																					 int w, int h,
-																					 vector<bool> v);
+																					 const std::vector<bool>& v);
 
 int build_l1r_vector(std::vector<double> &l1r, 
 										 double max_distance_corner,int Na, double *a);
