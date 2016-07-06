@@ -31,16 +31,25 @@ using namespace std;
 
 //------------------------------------------------------------------------------
 
-//Minimizing the energy according to the type of the lens distortion model
-//and the center optimization
+/**
+ * @brief Minimizing the energy according to the type of the lens distortion
+ *        model and the center optimization
+ * 
+ * @param[in,out] ldm: lens distortion model
+ * @param[in] ip: image primitives with 2D/3D lines
+ * @param[in] w
+ * @param[in] h
+ * @param[in] opt_center: optimize the distortion center
+ * @return final error
+ */
 double energy_minimization(lens_distortion_model &ldm, image_primitives &ip,
                            int w, int h, bool opt_center)
 {
   int model_type = ldm.get_type();
-  vector<bool> vtf(4); 
+  std::vector<bool> vtf(4);
   vtf[0] = vtf[1] = true;
   vtf[2] = vtf[3] = false;
-  vector<bool> vtt(4,true);
+  std::vector<bool> vtt(4,true);
   double error = 0.;
   double tf_error = 0.;
   double tt_error = 0.;
@@ -322,11 +331,11 @@ int main(int argc, char *argv[])
       min_orientation_value,
       min_distance_point
     );
-    const vector<int>& index = contours.get_index();
     
     // Save Canny result as image
     {
       //We create writable 3 channel images for edges
+      const vector<int>& index = contours.get_index();
       ami::image<unsigned char> edges3c(width, height, 3, 255);
       for(int i =0; i<(int)index.size(); i++)
       {
@@ -359,7 +368,7 @@ int main(int argc, char *argv[])
     );
     
     //ALGORITHM STAGE 3 : We apply the iterative optimization process
-    double final_error = iterative_optimization(
+    double image_error = iterative_optimization(
                             contours,
                             i_primitives,
                             distance_point_line_max_hough,
@@ -375,6 +384,7 @@ int main(int argc, char *argv[])
     
     cout << "...lines detected: " << i_primitives.get_lines().size() <<
         " with " << count_points(i_primitives) << " points" << std::endl;
+    cout << "image_error: " << image_error << std::endl;
     //We check if the iterative optimization process finishes properly
     if(i_primitives.get_lines().size() == 0)
     {
