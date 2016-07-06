@@ -26,6 +26,7 @@
 #include <string>
 #include <dirent.h>
 #include <stdexcept>
+#include <limits>
 
 using namespace std;
 
@@ -294,6 +295,9 @@ int main(int argc, char *argv[])
   else
     ini_ldm.set_type(DIVISION);
 
+  double best_error = std::numeric_limits<double>::max();
+  image_primitives all_primitives;
+
   //We read all the input image of the directory
   for(const std::string& input_filepath: input_files)
   {
@@ -391,25 +395,42 @@ int main(int argc, char *argv[])
       manage_failure(argv,0);
       continue;
     }
+    all_primitives.get_lines().insert(all_primitives.get_lines().end(), i_primitives.get_lines().begin(), i_primitives.get_lines().end());
+    if(image_error < best_error)
+    {
+      all_primitives.get_distortion() = i_primitives.get_distortion();
+      best_error = image_error;
+    }
+  }
 
+  //ALGORITHM STAGE 4 : We minimize the error on the whole group of images
+  lens_distortion_model previous_model = all_primitives.get_distortion();
+  double global_error = energy_minimization(previous_model, all_primitives, width, height, opt_center);
+
+  for(const std::string& input_filepath: input_files)
+  {
+    const std::string input_filename = get_filename(input_filepath);
+    std::string input_basename, input_extension;
+    split_filename(input_filename, input_basename, input_extension);
+    
     //Drawing the detected lines on the original image to illustrate the results
     {
       ami::image<unsigned char> gray3c(width, height, 3, 255);
-      drawHoughLines(i_primitives, gray3c);
+      drawHoughLines(all_primitives, gray3c);
       gray3c.write(std::string(argv[2]) + input_basename + "_hough.png");
     }
 
     //ALGORITHM STAGE 4 : Correcting the image distortion using the estimated model
-    if(i_primitives.get_distortion().get_d().size() > 0)
+    if(all_primitives.get_distortion().get_d().size() > 0)
     {
       cout << "Correcting the distortion..." << endl;
       ami::image<unsigned char> inputImage(input_filepath);
       
-      if(i_primitives.get_distortion().get_type() == DIVISION)
+      if(all_primitives.get_distortion().get_type() == DIVISION)
       {
         ami::image<unsigned char> undistorted = undistort_quotient_image_inverse(
           inputImage, // input image
-          i_primitives.get_distortion(), // lens distortion model
+          all_primitives.get_distortion(), // lens distortion model
           3.0 // integer index to fix the way the corrected image is scaled to fit input size image
         );
         
@@ -418,7 +439,7 @@ int main(int argc, char *argv[])
       }
       else
       {
-        lens_distortion_model ldm = i_primitives.get_distortion();
+        lens_distortion_model ldm = all_primitives.get_distortion();
         int vs = (ldm.get_d().size() == 2) ? 3 : 5;
         double *a = new double[vs];
         for(int i=0, ldmind = 0; i < vs; i++)
@@ -437,7 +458,7 @@ int main(int argc, char *argv[])
           inputImage,
           vs-1,
           a,
-          i_primitives.get_distortion().get_distortion_center(),
+          all_primitives.get_distortion().get_distortion_center(),
           2.0
         );
         
@@ -447,39 +468,39 @@ int main(int argc, char *argv[])
       }
       cout << "...distortion corrected." << endl;
     }
-
-    // WRITING OUTPUT TEXT DOCUMENTS
-        // writing in a file the lens distortion model and the lines and associated points
-    i_primitives.write(std::string(argv[2]) + input_basename + ".calib");
-    // writing function parameters and basic outputs :
-    ofstream fs("output.txt"); // Output file
-    fs << "Selected parameters:" << endl;
-    fs << "\t High Canny's threshold: " << argv[3] << endl;
-    fs << "\t Initial normalized distortion parameter: " << argv[4] << endl;
-    fs << "\t Final normalized distortion parameter: " << argv[5] << endl;
-    fs << "\t Maximum distance between points and line: " << argv[6] << endl;
-    fs << "\t Maximum difference between edge point and line orientations: " << argv[7]  << endl;
-    fs << "\t Model applied: " << argv[8] << endl;
-    fs << "\t Center optimization: " << argv[9] << endl;
-    fs << "-------------------------" << endl;
-    fs << "Results: " << endl;
-    fs << "\t Number of detected lines: " << i_primitives.get_lines().size() << endl;
-    
-    int count = count_points(i_primitives);
-    
-    fs << "\t Total amount of line points: " << count << endl;
-    fs << "\t Distortion center: (" << i_primitives.get_distorsion_center().x <<
-          ", " << i_primitives.get_distorsion_center().y << ")" << endl; 
-    
-    double p1 = 0.; 
-    double p2 = 0.;
-    bool is_division = (tmodel != std::string("pol"));
-    compute_ps(p1, p2, i_primitives.get_distortion(), width, height, is_division);
-    
-    fs << "\t Estimated normalized distortion parameters: p1 = " << p1 << " p2 = " << p2 << endl;
-    fs << "\t Average squared error distance in pixels between line and associated points = " << final_error << endl;
-    fs.close();
   }
+
+  // WRITING OUTPUT TEXT DOCUMENTS
+  // writing in a file the lens distortion model and the lines and associated points
+  all_primitives.write(std::string(argv[2]) + "global.calib");
+  // writing function parameters and basic outputs :
+  ofstream fs("output.txt"); // Output file
+  fs << "Selected parameters:" << endl;
+  fs << "\t High Canny's threshold: " << argv[3] << endl;
+  fs << "\t Initial normalized distortion parameter: " << argv[4] << endl;
+  fs << "\t Final normalized distortion parameter: " << argv[5] << endl;
+  fs << "\t Maximum distance between points and line: " << argv[6] << endl;
+  fs << "\t Maximum difference between edge point and line orientations: " << argv[7]  << endl;
+  fs << "\t Model applied: " << argv[8] << endl;
+  fs << "\t Center optimization: " << argv[9] << endl;
+  fs << "-------------------------" << endl;
+  fs << "Results: " << endl;
+  fs << "\t Number of detected lines: " << all_primitives.get_lines().size() << endl;
+
+  int count = count_points(all_primitives);
+
+  fs << "\t Total amount of line points: " << count << endl;
+  fs << "\t Distortion center: (" << all_primitives.get_distorsion_center().x <<
+        ", " << all_primitives.get_distorsion_center().y << ")" << endl; 
+
+  double p1 = 0.; 
+  double p2 = 0.;
+  bool is_division = (tmodel != std::string("pol"));
+  compute_ps(p1, p2, all_primitives.get_distortion(), width, height, is_division);
+
+  fs << "\t Estimated normalized distortion parameters: p1 = " << p1 << " p2 = " << p2 << endl;
+  fs << "\t Average squared error distance in pixels between line and associated points = " << global_error << endl;
+  fs.close();
   
   exit(EXIT_SUCCESS);
 }
