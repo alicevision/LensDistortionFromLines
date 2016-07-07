@@ -15,7 +15,7 @@
 This source code provides an implementation of a lens distortion correction algorithm 
 algorithm as described in IPOL
 
-http://www.ipol.im/pub/algo/****
+http://www.ipol.im/pub/pre/130
 
 This program reads an input image and automatically estimates a 2 parameter 
 polynomial or division lens distortion model, that it is used to correct image
