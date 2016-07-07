@@ -87,6 +87,7 @@ This program takes 10 parameters:
 * 'angle_point_orientation_max_difference': maximum difference (in degrees) of the point orientation angle and the line angle
 * 'type_of_lens_distortion_model'         : type of the lens distortion model for the correction of the distortion (pol or div)
 * 'center_optimization'                   : optimization of the center of the lens distortion model (True or False)
+* 'max_lines'                            : int value for the maximal number of lines estimated per image (greater to 0)
 
 
 # SOURCE CODE ORGANIZATION
@@ -109,7 +110,7 @@ The source code is organized in the following folders :
 You can test the program with the provided test image (building.png) in the 
 following way:
 
-./lens_distortion_correction_2p_iterative_optimization /data/input/ /data/output/ 0.8 0.0 3.0 3.0 10.0 div True
+./lens_distortion_correction_2p_iterative_optimization /data/input/ /data/output/ 0.8 0.0 3.0 3.0 10.0 div True 1000
 
 Furthermore, you can compare your results with the results present inside the folder 'example'
 

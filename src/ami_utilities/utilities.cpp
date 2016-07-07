@@ -292,14 +292,15 @@ void print_function_syntax_lens_distortion_correction_2p_iterative_optimization(
 	cout << "angle_point_orientation_max_difference ";
 	cout << "type_of_lens_distortion_model ";
 	cout << "center_optimization ";
+  cout << "max_lines ";
 	cout << "primitives_file" << endl;
 	
 	cout << "Parameters description:" << endl;
 	cout << "  exe_file: executable name, by default: ";
 	cout << "lens_distortion_correction_2p_iterative_optimization"
 			 << endl;
-	cout << "  /data/input/: input directory." << endl;
-	cout << "  /data/output/: output directory.";
+	cout << "  /data/input/: input directory" << endl;
+	cout << "  /data/output/: output directory"<< endl;
 	cout << "  high_threshold_Canny: float value for the high threshold of the ";
 	cout << "Canny method (between 0.7 and 1.0)" << endl;
 	cout << "  initial_distortion_parameter: float value for the initial ";
@@ -313,11 +314,12 @@ void print_function_syntax_lens_distortion_correction_2p_iterative_optimization(
 	cout << "  type_of_lens_distortion_model: type of the lens distortion model for ";
 	cout << "the correction of the distortion (pol or div)" << endl;
 	cout << "  center_optimization: optimization of the center of the lens ";
-	cout << "distortion model (True or False)" << endl << endl;
+	cout << "distortion model (True or False)" << endl;
+  cout << "  max_lines: maximum number of lines estimated per image (greater than 0)" << endl << endl;
 	cout << "Example command:" << endl;
 	cout << " ./lens_distortion_correction_2p_iterative_optimization /data/input/";
 	cout << " /data/output/ 0.8 ";
-	cout << "0.0 3.0 3.0 10.0 div True" << endl;
+	cout << "0.0 3.0 3.0 10.0 div True 20" << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -407,7 +409,14 @@ int check_params_lens_distortion_correction_2p_iterative_optimization(char *argv
 		error_message += error_message_head + "9 (optimization of the center of "+
 									"the lens distortion model). The allowed values are: True or "+
 									"False\n";
-									
+  
+  //Maximum number of frames to export
+	num = atof(argv[10]);
+	if(num < 0)
+		error_message += error_message_head +
+										 "10 (maximum number of lines estimated per image)" +
+										 error_message_numgt + " 0\n";
+  
 	if(error_message.length() > 0)
 	{
 		cout << error_message;
@@ -440,10 +449,11 @@ void manage_failure(char *argv[], int code)
     fs << "\t Initial normalized distortion parameter: " << argv[4] << endl;
     fs << "\t Final normalized distortion parameter: " << argv[5] << endl;
     fs << "\t Maximum distance between points and line: " << argv[6] << endl;
-    fs << "\t Maximum differente between edge point and line orientations: "
+    fs << "\t Maximum different between edge point and line orientations: "
      << argv[7]	<< endl;
 		fs << "\t Model applied: " << argv[8] << endl;
 		fs << "\t Center optimization: " << argv[9] << endl;
+    fs << "\t Maximum frames for estimate the lens distortion model: " << argv[10] << endl;
     fs << "-------------------------" << endl;
     fs << "Results: " << endl;
 	fs << "\t Program failed:" << endl;
